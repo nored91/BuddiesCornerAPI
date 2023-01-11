@@ -1,0 +1,2 @@
+# BuddiesCornerAPI
+BuddiesCorner API
