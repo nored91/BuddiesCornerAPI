@@ -32,22 +32,26 @@ CREATE TABLE "user" (
 CREATE TABLE "event" ( 
   event_id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   group_id uuid,
+  creator_user_id uuid,
   title varchar(100) NOT NULL, 
   description varchar(255),
   creation_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
   event_date timestamp,
   location varchar(255),
   type event_type NOT NULL,
-  CONSTRAINT foreign_key_group_event FOREIGN KEY(group_id) REFERENCES "group"(group_id)
+  CONSTRAINT foreign_key_group_event FOREIGN KEY(group_id) REFERENCES "group"(group_id),
+  CONSTRAINT foreign_key_creator_user_event FOREIGN KEY(creator_user_id) REFERENCES "user"(user_id)
 );
 
 CREATE TABLE "comment" ( 
   comment_id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  parent_comment_id uuid,
   event_id uuid,
   user_id uuid,
   message varchar(255) NOT NULL,
   creation_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
   edition_date timestamp,
+  CONSTRAINT foreign_key_parent_comment_comment FOREIGN KEY(parent_comment_id) REFERENCES "comment"(comment_id),
   CONSTRAINT foreign_key_event_comment FOREIGN KEY(event_id) REFERENCES "event"(event_id),
   CONSTRAINT foreign_key_user_comment FOREIGN KEY(user_id) REFERENCES "user"(user_id)
 );
@@ -57,7 +61,7 @@ CREATE TABLE task (
   event_id uuid,
   user_id uuid,
   title varchar(100) NOT NULL, 
-  achieve boolean,
+  achieve boolean DEFAULT false,
   CONSTRAINT foreign_key_event_task FOREIGN KEY(event_id) REFERENCES "event"(event_id),
   CONSTRAINT foreign_key_user_task FOREIGN KEY(user_id) REFERENCES "user"(user_id)
 );
