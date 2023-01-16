@@ -87,3 +87,19 @@ INSERT INTO task (event_id, user_id, title) VALUES (
     (select event_id from "event" where event.title = 'Séance du mardi'),
     (select user_id from "user" where "user".mail = 'thoretton.norman@gmail.com'),
     'Ramène tes chaussons');
+
+INSERT INTO comment (event_id,user_id,message,creation_date) VALUES (
+  (SELECT event_id FROM "event" WHERE title = 'Séance du mardi'),
+  (SELECT user_id FROM "user" WHERE mail = 'legraskevin@outlook.com'),
+  'Norman tu es pas beau',
+  '2023-01-16 13:00:00'::timestamp
+);
+
+INSERT INTO comment (parent_comment_id,event_id,user_id,message,creation_date,edition_date) VALUES (
+  (SELECT comment_id FROM comment WHERE message = 'Norman tu es pas beau'),
+  (SELECT event_id FROM "event" WHERE title = 'Séance du mardi'),
+  (SELECT user_id FROM "user" WHERE mail = 'thoretton.norman@gmail.com'),
+  'Vous avez raison mon maitre',
+  '2023-01-16 13:10:00'::timestamp,
+  '2023-01-16 13:11:00'::timestamp
+);
