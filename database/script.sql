@@ -15,18 +15,18 @@ CREATE TABLE "group" (
   group_id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   title varchar(100) NOT NULL,
   description varchar(255),
-  creation_date Date 
+  creation_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP(0)
 );
 
 CREATE TABLE "user" ( 
   user_id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-  mail varchar(255) NOT NULL,
+  mail varchar(255) NOT NULL UNIQUE,
   firstname varchar(50) NOT NULL,
   lastname varchar(50) NOT NULL,
   pseudo varchar(50) NOT NULL,
   password varchar(255) NOT NULL,
-  active boolean,
-  creation_date Date NOT NULL
+  active boolean DEFAULT false,
+  creation_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP(0)
 );
 
 CREATE TABLE "event" ( 
@@ -34,8 +34,8 @@ CREATE TABLE "event" (
   group_id uuid,
   title varchar(100) NOT NULL, 
   description varchar(255),
-  creation_date Date NOT NULL,
-  event_date Date,
+  creation_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+  event_date timestamp,
   location varchar(255),
   type event_type NOT NULL,
   CONSTRAINT foreign_key_group_event FOREIGN KEY(group_id) REFERENCES "group"(group_id)
@@ -46,8 +46,8 @@ CREATE TABLE "comment" (
   event_id uuid,
   user_id uuid,
   message varchar(255) NOT NULL,
-  creation_date Date NOT NULL,
-  edition_date Date,
+  creation_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+  edition_date timestamp,
   CONSTRAINT foreign_key_event_comment FOREIGN KEY(event_id) REFERENCES "event"(event_id),
   CONSTRAINT foreign_key_user_comment FOREIGN KEY(user_id) REFERENCES "user"(user_id)
 );
@@ -73,6 +73,7 @@ CREATE TABLE event_user(
 CREATE TABLE group_user(
   group_id uuid,
   user_id uuid,
+  administrator boolean default false,
   PRIMARY KEY (group_id, user_id),
   CONSTRAINT primary_key_group_group_user FOREIGN KEY (group_id) REFERENCES "group"(group_id),
   CONSTRAINT primary_key_user_group_user FOREIGN KEY (user_id) REFERENCES "user"(user_id)
