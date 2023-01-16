@@ -8,85 +8,85 @@ INSERT INTO "group" (title) VALUES ('Au bar');
 INSERT INTO "group" (title) VALUES ('Vacance');
 
 INSERT INTO group_user VALUES (
-    (select group_id from "group" where "group".title = 'On va au bloc'),
-    (select user_id from "user" where "user".mail = 'thoretton.norman@gmail.com'),
-    true
+  (select group_id from "group" where "group".title = 'On va au bloc'),
+  (select user_id from "user" where "user".mail = 'thoretton.norman@gmail.com'),
+  true
 );
 INSERT INTO group_user VALUES (
-    (select group_id from "group" where "group".title = 'On va au bloc'),
-    (select user_id from "user" where "user".mail = 'legraskevin@outlook.com'),
-    false
+  (select group_id from "group" where "group".title = 'On va au bloc'),
+  (select user_id from "user" where "user".mail = 'legraskevin@outlook.com'),
+  false
 );
 
 INSERT INTO group_user VALUES (
-    (select group_id from "group" where "group".title = 'Au bar'),
-    (select user_id from "user" where "user".mail = 'legraskevin@outlook.com'),
-    true
+  (select group_id from "group" where "group".title = 'Au bar'),
+  (select user_id from "user" where "user".mail = 'legraskevin@outlook.com'),
+  true
 );
 INSERT INTO group_user VALUES (
-    (select group_id from "group" where "group".title = 'Au bar'),
-    (select user_id from "user" where "user".mail = 'thoretton.norman@gmail.com'),
-    true
+  (select group_id from "group" where "group".title = 'Au bar'),
+  (select user_id from "user" where "user".mail = 'thoretton.norman@gmail.com'),
+  true
 );
 INSERT INTO group_user (group_id,user_id) VALUES (
-    (select group_id from "group" where "group".title = 'Au bar'),
-    (select user_id from "user" where "user".mail = 'activated@test.fr')
+  (select group_id from "group" where "group".title = 'Au bar'),
+  (select user_id from "user" where "user".mail = 'activated@test.fr')
 );
 INSERT INTO group_user (group_id,user_id) VALUES (
-    (select group_id from "group" where "group".title = 'Au bar'),
-    (select user_id from "user" where "user".mail = 'notactivated@test.fr')
+  (select group_id from "group" where "group".title = 'Au bar'),
+  (select user_id from "user" where "user".mail = 'notactivated@test.fr')
 );
 
 INSERT INTO event (group_id,creator_user_id,title,description,event_date,location,type) VALUES (
-    (select group_id from "group" where "group".title = 'On va au bloc'),
-    (select user_id from "user" where "user".mail = 'thoretton.norman@gmail.com'),
-    'Séance du mardi',
-    'La classico du mardi',
-    '2023/01/16:12:00:00'::timestamp,
-    'Le labo (Grenoble gare)',
-    'sport'
+  (select group_id from "group" where "group".title = 'On va au bloc'),
+  (select user_id from "user" where "user".mail = 'thoretton.norman@gmail.com'),
+  'Séance du mardi',
+  'La classico du mardi',
+  '2023/01/16:12:00:00'::timestamp,
+  'Le labo (Grenoble gare)',
+  'sport'
 );
 INSERT INTO event_user (event_id,user_id) VALUES (
-    (select event_id from "event" where event.title = 'Séance du mardi'),
-    (select user_id from "user" where "user".mail = 'thoretton.norman@gmail.com')
+  (select event_id from "event" where event.title = 'Séance du mardi'),
+  (select user_id from "user" where "user".mail = 'thoretton.norman@gmail.com')
 );
 
 INSERT INTO event (group_id,creator_user_id,title,description,event_date,location,type) VALUES (
-    (select group_id from "group" where "group".title = 'On va au bloc'),
-    (select user_id from "user" where "user".mail = 'thoretton.norman@gmail.com'),
-    'Séance du vendredi 18 février',
-    'La classico du vendredi',
-    '2023/02/18:12:00:00'::timestamp,
-    'Le labo (Grenoble gare)',
-    'sport'
+  (select group_id from "group" where "group".title = 'On va au bloc'),
+  (select user_id from "user" where "user".mail = 'thoretton.norman@gmail.com'),
+  'Séance du vendredi 18 février',
+  'La classico du vendredi',
+  '2023/02/18:12:00:00'::timestamp,
+  'Le labo (Grenoble gare)',
+  'sport'
 );
 INSERT INTO event_user (event_id,user_id) VALUES (
-    (select event_id from "event" where event.title = 'Séance du vendredi 18 février'),
-    (select user_id from "user" where "user".mail = 'thoretton.norman@gmail.com')
+  (select event_id from "event" where event.title = 'Séance du vendredi 18 février'),
+  (select user_id from "user" where "user".mail = 'thoretton.norman@gmail.com')
 );
 INSERT INTO event_user (event_id,user_id) VALUES (
-    (select event_id from "event" where event.title = 'Séance du vendredi 18 février'),
-    (select user_id from "user" where "user".mail = 'activated@test.fr')
+  (select event_id from "event" where event.title = 'Séance du vendredi 18 février'),
+  (select user_id from "user" where "user".mail = 'activated@test.fr')
 );
 INSERT INTO event_user (event_id,user_id) VALUES (
-    (select event_id from "event" where event.title = 'Séance du vendredi 18 février'),
-    (select user_id from "user" where "user".mail = 'legraskevin@outlook.com')
+  (select event_id from "event" where event.title = 'Séance du vendredi 18 février'),
+  (select user_id from "user" where "user".mail = 'legraskevin@outlook.com')
 );
 
 INSERT INTO task (event_id, user_id, title) VALUES (
-    (select event_id from "event" where event.title = 'Séance du vendredi 18 février'),
-    (select user_id from "user" where "user".mail = 'legraskevin@outlook.com'),
-    'Ramène tes chaussons');
+  (select event_id from "event" where event.title = 'Séance du vendredi 18 février'),
+  (select user_id from "user" where "user".mail = 'legraskevin@outlook.com'),
+  'Ramène tes chaussons');
 
 INSERT INTO task (event_id, user_id, title) VALUES (
-    (select event_id from "event" where event.title = 'Séance du mardi'),
-    (select user_id from "user" where "user".mail = 'legraskevin@outlook.com'),
-    'Je dois une bière à norman');
+  (select event_id from "event" where event.title = 'Séance du mardi'),
+  (select user_id from "user" where "user".mail = 'legraskevin@outlook.com'),
+  'Je dois une bière à norman');
 
 INSERT INTO task (event_id, user_id, title) VALUES (
-    (select event_id from "event" where event.title = 'Séance du mardi'),
-    (select user_id from "user" where "user".mail = 'thoretton.norman@gmail.com'),
-    'Ramène tes chaussons');
+  (select event_id from "event" where event.title = 'Séance du mardi'),
+  (select user_id from "user" where "user".mail = 'thoretton.norman@gmail.com'),
+  'Ramène tes chaussons');
 
 INSERT INTO comment (event_id,user_id,message,creation_date) VALUES (
   (SELECT event_id FROM "event" WHERE title = 'Séance du mardi'),
