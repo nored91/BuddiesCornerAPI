@@ -1,6 +1,12 @@
-import { Body, Injectable, Post } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import {
+  DeleteResult,
+  FindManyOptions,
+  FindOptionsWhere,
+  Repository,
+} from 'typeorm';
+import { CreateUserDTO, UpdateUserDTO } from './user.dto';
 import { User } from './user.entity';
 
 @Injectable()
@@ -10,13 +16,23 @@ export class UserService {
     private userRepository: Repository<User>,
   ) {}
 
-  findAll(): Promise<[User[], number]> {
-    return this.userRepository.findAndCount();
+  async findAll(options: FindManyOptions): Promise<[User[], number]> {
+    return await this.userRepository.findAndCount();
   }
 
-  findOne(id: string): Promise<User> {
-    return this.userRepository.findOneBy({ user_id: id });
+  async findOne(id: string): Promise<User> {
+    return await this.userRepository.findOneBy({ user_id: id });
   }
 
-  //create(UserDto: UserDto) { return null}
+  async create(createUserDTO: CreateUserDTO): Promise<User> {
+    return await this.userRepository.save(createUserDTO);
+  }
+
+  async patch(updateUserDTO: UpdateUserDTO): Promise<User> {
+    return await this.userRepository.save(updateUserDTO);
+  }
+
+  async delete(options: FindOptionsWhere<User>): Promise<DeleteResult> {
+    return await this.userRepository.delete(options);
+  }
 }
