@@ -1,6 +1,8 @@
 /* eslint-disable prettier/prettier */
 import { Delete, Param, Patch } from '@nestjs/common';
-import { Body, Controller, Get, Post } from '@nestjs/common/decorators';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common/decorators';
+import { Filter } from 'src/common/object/filter.object';
+import { Page } from 'src/common/object/page.object';
 import { FindManyOptions } from 'typeorm';
 import { CreateUserDTO, UpdateUserDTO } from './user.dto';
 import { User } from './user.entity';
@@ -12,8 +14,10 @@ export class UserController {
   constructor(private readonly userService: UserService) { };
 
   @Get()
-  async findAll(): Promise<[User[], number]> {
+  async findAll(@Query('page') page: Page, @Query('filter') filter: Filter): Promise<[User[], number]> {
     const options: FindManyOptions = {};
+    console.log(page.limit);
+    // console.log(filter.test.limit);
     return await this.userService.findAll(options);
   }
 
