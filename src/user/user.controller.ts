@@ -9,7 +9,7 @@ import { UserService } from './user.service';
 @Controller('user')
 export class UserController {
 
-  constructor(private readonly userService: UserService){};
+  constructor(private readonly userService: UserService) { };
 
   @Get()
   async findAll(): Promise<[User[], number]> {
@@ -18,23 +18,23 @@ export class UserController {
   }
 
   @Get('/:id')
-  findOne(@Param('id') userId : string) {
+  findOne(@Param('id') userId: string) {
     return this.userService.findOne(userId);
   }
 
   @Post()
-  create(@Body() createUserDTO : CreateUserDTO) {
+  create(@Body() createUserDTO: CreateUserDTO) {
     return this.userService.create(createUserDTO);
   }
 
   @Patch('/:id')
-  update(@Param('id') userId : string,@Body() updateUserDTO : UpdateUserDTO) {
+  update(@Param('id') userId: string, @Body() updateUserDTO: UpdateUserDTO) {
     updateUserDTO.user_id = userId;
     return this.userService.patch(updateUserDTO);
   }
 
   @Delete('/:id')
-  delete(@Param('id') userId : string) {
-    return this.userService.delete({user_id : userId});
+  delete(@Param('id') userId: string) {
+    return this.userService.delete({ user_id: userId });
   }
 }

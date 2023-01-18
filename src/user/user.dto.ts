@@ -2,6 +2,7 @@ import {
   IsBoolean,
   IsDefined,
   IsEmail,
+  IsOptional,
   IsString,
   Length,
 } from 'class-validator';
@@ -40,24 +41,30 @@ export class UpdateUserDTO {
   @IsEmail()
   @IsString()
   @Length(1, 255)
+  @IsOptional()
   public mail: string;
 
   @IsString()
   @Length(1, 50)
+  @IsOptional()
   public firstname: string;
 
   @IsString()
   @Length(1, 50)
+  @IsOptional()
   public lastname: string;
 
   @IsString()
   @Length(1, 50)
+  @IsOptional()
   public pseudo: string;
 
   @IsString()
   @Length(1, 255)
+  @IsOptional()
   public password: string;
 
   @IsBoolean()
+  @IsOptional()
   public active: boolean;
 }
