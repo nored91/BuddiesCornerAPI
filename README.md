@@ -1,7 +1,9 @@
 
 ## Description
 
-BuddiesCorner is made with [Nest]
+BuddiesCorner API is made with [Nest] using [TypeORM]
+Respecting https://jsonapi.org convention
+Tests are handled by [Jest]
 
 ## Installation
 
