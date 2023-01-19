@@ -1,5 +1,5 @@
 import { ExceptionFilter, Catch, ArgumentsHost, BadRequestException, HttpException } from '@nestjs/common';
-import { BadRequestExceptionValidation } from './BadRequestExceptionValidation';
+import { BadRequestExceptionValidation } from './badRequestExceptionValidation';
 
 @Catch(BadRequestExceptionValidation)
 export class BadRequestExceptionFilter implements ExceptionFilter<BadRequestExceptionValidation> {

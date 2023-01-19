@@ -1,5 +1,5 @@
 import { BadRequestException, ValidationError } from "@nestjs/common";
-import { ValidationErrorMessage } from "../object/ValidationErrorMessage.object";
+import { ValidationErrorMessage } from "../object/validationErrorMessage.object";
 
 export class BadRequestExceptionValidation extends BadRequestException {
   validationErrorsMessage: ValidationErrorMessage[];

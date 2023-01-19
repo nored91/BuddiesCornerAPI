@@ -1,9 +1,14 @@
 /* eslint-disable prettier/prettier */
-import { Delete, Param, Patch } from '@nestjs/common';
-import { Body, Controller, Get, Post, Query } from '@nestjs/common/decorators';
-import { ApiResponse } from '@nestjs/swagger';
-import { Page } from 'src/common/object/page.object';
+import { Delete, Param, ParseUUIDPipe, Patch } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseFilters } from '@nestjs/common/decorators';
+import { ApiOkResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { BadRequestExceptionValidation } from 'src/common/exception/badRequestExceptionValidation';
+import { ObjectNotFoundException } from 'src/common/exception/objectNotFoundException';
+import { Pagination } from 'src/common/object/pagination.object';
 import { ObjectResponse } from 'src/common/response/objectResponse';
+import { ObjectResponseCreate } from 'src/common/response/objectResponseCreate';
+import { ObjectResponseDelete } from 'src/common/response/objectResponseDelete';
+import { ObjectResponseUpdate } from 'src/common/response/objectResponseUpdate';
 import { FindManyOptions } from 'typeorm';
 import { CreateUserDTO, UpdateUserDTO } from './user.dto';
 import { User } from './user.entity';
@@ -11,41 +16,62 @@ import { UserFilter } from './user.filter';
 import { UserService } from './user.service';
 
 @Controller('user')
+@ApiTags('User')
+@UseFilters(ObjectNotFoundException)
 export class UserController {
 
   constructor(private readonly userService: UserService) { };
 
-  @ApiResponse({
-    status: 200,
-    type: ObjectResponse<User>,
-    description: "User list and count"
-  })
+  @ApiResponse({ status: 200, type: ObjectResponse<User>, description: "A list of user" })
   @Get()
-  async findAll(@Query('page') page: Page, @Query('filter') userFilter: UserFilter): Promise<ObjectResponse<User>> {
+  async findAll(@Query('page') page: Pagination, @Query('filter') userFilter: UserFilter): Promise<ObjectResponse<User>> {
     const options: FindManyOptions = {};
-    console.log(page.limit);
+    //console.log(page.limit);
     // console.log(filter.test.limit);
     return new ObjectResponse<User>(await this.userService.findAll(options))
   }
 
+  @ApiResponse({ status: 200, type: User, description: "Requested user" })
+  @ApiResponse({ status: 404, type: ObjectNotFoundException, description: "No user found" })
   @Get('/:id')
-  findOne(@Param('id') userId: string) {
-    return this.userService.findOne(userId);
+  async findOne(@Param('id', ParseUUIDPipe) userId: string) {
+    const user: User = await this.userService.findOne(userId);
+    if (user === null) {
+      throw new ObjectNotFoundException('User not found with id : ' + userId, 404);
+    }
+    return user;
   }
 
+  @ApiResponse({ status: 201, type: ObjectResponseCreate<User>, description: "The user has been created successfully" })
+  @ApiResponse({ status: 400, type: BadRequestExceptionValidation, description: "Bad Request - Validation failed" })
   @Post()
-  create(@Body() createUserDTO: CreateUserDTO) {
-    return this.userService.create(createUserDTO);
+  async create(@Body() createUserDTO: CreateUserDTO): Promise<ObjectResponseCreate<User>> {
+    return new ObjectResponseCreate(await this.userService.create(createUserDTO), 'The user has been created successfully');
   }
 
+  @ApiResponse({ status: 201, type: ObjectResponseUpdate, description: "The user has been created successfully" })
+  @ApiResponse({ status: 404, type: ObjectNotFoundException, description: "No user found" })
   @Patch('/:id')
-  update(@Param('id') userId: string, @Body() updateUserDTO: UpdateUserDTO) {
+  async update(@Param('id', ParseUUIDPipe) userId: string, @Body() updateUserDTO: UpdateUserDTO) {
     updateUserDTO.user_id = userId;
-    return this.userService.patch(updateUserDTO);
+    let user: User = await this.userService.findOne(userId);
+    if (user === null) {
+      throw new ObjectNotFoundException('User not found with id : ' + userId, 404);
+    }
+    user = await this.userService.patch(updateUserDTO);
+    return new ObjectResponseUpdate(user.user_id, 'The user has been updated successfully')
   }
 
+
+  @ApiResponse({ status: 200, type: ObjectResponseDelete, description: "The user has been deleted successfully" })
+  @ApiResponse({ status: 404, type: ObjectNotFoundException, description: "No user found" })
   @Delete('/:id')
-  delete(@Param('id') userId: string) {
-    return this.userService.delete({ user_id: userId });
+  async delete(@Param('id', ParseUUIDPipe) userId: string) {
+    let user: User = await this.userService.findOne(userId);
+    if (user === null) {
+      throw new ObjectNotFoundException('User not found with id : ' + userId, 404);
+    }
+    await this.userService.delete({ user_id: userId });
+    return new ObjectResponseDelete(userId, 'The user has been deleted successfully');
   }
 }

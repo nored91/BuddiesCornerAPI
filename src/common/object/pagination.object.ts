@@ -1,7 +1,7 @@
 import { Transform, Type } from "class-transformer";
 import { IsDefined, IsOptional } from "class-validator";
 
-export class Page {
+export class Pagination {
 
   @IsOptional()
   @Type(() => Number)

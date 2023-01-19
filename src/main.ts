@@ -2,8 +2,9 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationError, ValidationPipe } from '@nestjs/common';
-import { BadRequestExceptionFilter } from './common/exception/BadRequestExceptionFilter';
-import { BadRequestExceptionValidation } from './common/exception/BadRequestExceptionValidation';
+import { BadRequestExceptionFilter } from './common/exception/badRequestExceptionFilter';
+import { BadRequestExceptionValidation } from './common/exception/badRequestExceptionValidation';
+import { QueryFailedErrorException } from './common/exception/queryFailledErrorException';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -16,7 +17,7 @@ async function bootstrap() {
       return new BadRequestExceptionValidation(validationErrors);
     }
   }));
-  app.useGlobalFilters(new BadRequestExceptionFilter())
+  app.useGlobalFilters(new BadRequestExceptionFilter(), new QueryFailedErrorException())
 
   const config = new DocumentBuilder()
     .setTitle('Buddies Corner API')
