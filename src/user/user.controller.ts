@@ -1,11 +1,13 @@
 /* eslint-disable prettier/prettier */
 import { Delete, Param, Patch } from '@nestjs/common';
 import { Body, Controller, Get, Post, Query } from '@nestjs/common/decorators';
-import { Filter } from 'src/common/object/filter.object';
+import { ApiResponse } from '@nestjs/swagger';
 import { Page } from 'src/common/object/page.object';
+import { ObjectResponse } from 'src/common/response/objectResponse';
 import { FindManyOptions } from 'typeorm';
 import { CreateUserDTO, UpdateUserDTO } from './user.dto';
 import { User } from './user.entity';
+import { UserFilter } from './user.filter';
 import { UserService } from './user.service';
 
 @Controller('user')
@@ -13,12 +15,17 @@ export class UserController {
 
   constructor(private readonly userService: UserService) { };
 
+  @ApiResponse({
+    status: 200,
+    type: ObjectResponse<User>,
+    description: "User list and count"
+  })
   @Get()
-  async findAll(@Query('page') page: Page, @Query('filter') filter: Filter): Promise<[User[], number]> {
+  async findAll(@Query('page') page: Page, @Query('filter') userFilter: UserFilter): Promise<ObjectResponse<User>> {
     const options: FindManyOptions = {};
     console.log(page.limit);
     // console.log(filter.test.limit);
-    return await this.userService.findAll(options);
+    return new ObjectResponse<User>(await this.userService.findAll(options))
   }
 
   @Get('/:id')

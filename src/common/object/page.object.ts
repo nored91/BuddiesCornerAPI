@@ -1,12 +1,12 @@
 import { Transform, Type } from "class-transformer";
-import { IsDefined } from "class-validator";
+import { IsDefined, IsOptional } from "class-validator";
 
 export class Page {
 
-  @IsDefined()
+  @IsOptional()
   @Type(() => Number)
   public limit: number;
 
-  @IsDefined()
+  @IsOptional()
   public offset: number;
 }
