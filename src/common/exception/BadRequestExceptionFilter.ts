@@ -1,40 +1,21 @@
 import { ExceptionFilter, Catch, ArgumentsHost, BadRequestException, HttpException } from '@nestjs/common';
-import { HttpArgumentsHost } from '@nestjs/common/interfaces';
-import { ValidationError } from 'class-validator';
-import { Request, Response } from 'express';
+import { BadRequestExceptionValidation } from './BadRequestExceptionValidation';
 
-@Catch(BadRequestException)
-export class BadRequestExceptionFilter implements ExceptionFilter<BadRequestException> {
+@Catch(BadRequestExceptionValidation)
+export class BadRequestExceptionFilter implements ExceptionFilter<BadRequestExceptionValidation> {
 
-  catch(exception: BadRequestException, host: ArgumentsHost) {
+  catch(exception: BadRequestExceptionValidation, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
     const request = ctx.getRequest();
     const status = exception.getStatus();
 
-    /*console.log('passsse');
-
-    console.log(exception.getResponse());
-
-    let exceptionResponse = exception.message;
-    let message = [];
-
-    if (exceptionResponse instanceof Object) {
-      let validationErrors: ValidationError[] = exceptionResponse as ValidationError[];
-      //console.log(validationErrors);
-      validationErrors.map((val: ValidationError, i: number) => {
-        return { [val.property]: val.constraints }
-      })
-      message = validationErrors;
-    }*/
-
-
     response
-      .status(400)
-      // you can manipulate the response here
+      .status(status)
       .json({
         statusCode: status,
         message: exception.message,
+        data: exception.validationErrorsMessage,
         path: request.url,
       });
   }

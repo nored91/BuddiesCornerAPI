@@ -1,8 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { BadRequestException, ValidationError, ValidationPipe } from '@nestjs/common';
+import { ValidationError, ValidationPipe } from '@nestjs/common';
 import { BadRequestExceptionFilter } from './common/exception/BadRequestExceptionFilter';
+import { BadRequestExceptionValidation } from './common/exception/BadRequestExceptionValidation';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -12,7 +13,7 @@ async function bootstrap() {
     enableDebugMessages: true,
     transform: true,
     exceptionFactory: (validationErrors: ValidationError[] = []) => {
-      return new BadRequestException(validationErrors);
+      return new BadRequestExceptionValidation(validationErrors);
     }
   }));
   app.useGlobalFilters(new BadRequestExceptionFilter())
