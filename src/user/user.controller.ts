@@ -24,11 +24,10 @@ export class UserController {
 
   @ApiResponse({ status: 200, type: ObjectResponse<User>, description: "A list of user" })
   @Get()
-  async findAll(@Query('page') page: Pagination, @Query('filter') userFilter: UserFilter): Promise<ObjectResponse<User>> {
-    const options: FindManyOptions = {};
-    //console.log(page.limit);
-    // console.log(filter.test.limit);
-    return new ObjectResponse<User>(await this.userService.findAll(options))
+  async findAll(@Query('page') pagination: Pagination, @Query('filter') userFilter: UserFilter): Promise<ObjectResponse<User>> {
+    console.log(pagination);
+    console.log(userFilter);
+    return new ObjectResponse<User>(await this.userService.findAll(pagination, userFilter))
   }
 
   @ApiResponse({ status: 200, type: User, description: "Requested user" })

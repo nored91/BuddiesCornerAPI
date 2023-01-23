@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Pagination } from 'src/common/object/pagination.object';
 import { DeleteResult, FindManyOptions, FindOptionsWhere, Repository } from 'typeorm';
 import { CreateUserDTO, UpdateUserDTO } from './user.dto';
 import { User } from './user.entity';
+import { UserFilter } from './user.filter';
 
 @Injectable()
 export class UserService {
@@ -11,7 +13,9 @@ export class UserService {
     private userRepository: Repository<User>,
   ) { }
 
-  async findAll(options: FindManyOptions): Promise<[User[], number]> {
+  async findAll(pagination: Pagination, UserFilter: UserFilter): Promise<[User[], number]> {
+    let options: FindManyOptions = {};
+
     return await this.userRepository.findAndCount();
   }
 
