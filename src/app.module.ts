@@ -16,6 +16,7 @@ import { UserService } from './user/user.service';
       database: 'buddiescorner',
       entities: [User],
       synchronize: false,
+      logging: true
     }),
     UserModule
   ],

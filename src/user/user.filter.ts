@@ -1,14 +1,18 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsBoolean, IsOptional, IsString } from "class-validator";
+import { Type } from "class-transformer";
+import { IsBoolean, IsOptional, IsString, IsUUID } from "class-validator";
+import { FindOptionsWhere, ILike } from "typeorm";
+import { User } from "./user.entity";
+
 
 export class UserFilter {
 
-  @ApiProperty({ description: 'Filter by user id', type: String, example: '39048102-0e9b-46c7-9dd6-de34169e3ee1', required: false })
-  @IsString()
+  @ApiProperty({ name: 'user_id', description: 'Filter by user id', type: String, example: '39048102-0e9b-46c7-9dd6-de34169e3ee1', required: false })
+  @IsUUID()
   @IsOptional()
   public user_id: string;
 
-  @ApiProperty({ description: 'Filter by mail', type: String, example: 'toto.test@gmail.com', required: false })
+  @ApiProperty({ name: 'mail', description: 'Filter by mail', type: String, example: 'toto.test@gmail.com', required: false })
   @IsString()
   @IsOptional()
   public mail: string;
@@ -31,5 +35,26 @@ export class UserFilter {
   @ApiProperty({ description: 'Filter by activation state', type: Boolean, example: true, required: false })
   @IsBoolean()
   @IsOptional()
+  @Type(() => Boolean)
   public active: boolean;
+
+  translateToFindOptionWhereList(): FindOptionsWhere<User> {
+    let options: FindOptionsWhere<User> = {}
+    let eqColumns = ['user_id', 'active']
+    let ilikeColumns = ['mail', 'firstname', 'lastname', 'pseudo']
+
+    eqColumns.forEach((val) => {
+      if (this[val]) {
+        options[val] = this[val]
+      }
+    })
+
+    ilikeColumns.forEach((val) => {
+      if (this[val]) {
+        options[val] = ILike('%' + this[val] + '%')
+      }
+    })
+
+    return options;
+  }
 }

@@ -13,10 +13,14 @@ export class UserService {
     private userRepository: Repository<User>,
   ) { }
 
-  async findAll(pagination: Pagination, UserFilter: UserFilter): Promise<[User[], number]> {
-    let options: FindManyOptions = {};
+  async findAll(pagination: Pagination, userFilter: UserFilter): Promise<[User[], number]> {
+    let options: FindManyOptions = {
+      skip: pagination.offset,
+      take: pagination.limit,
+      where: userFilter.translateToFindOptionWhereList()
+    };
 
-    return await this.userRepository.findAndCount();
+    return await this.userRepository.findAndCount(options);
   }
 
   async findOne(id: string): Promise<User> {

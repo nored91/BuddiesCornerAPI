@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { networkInterfaces } from 'os';
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()

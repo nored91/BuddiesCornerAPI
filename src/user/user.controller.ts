@@ -1,15 +1,15 @@
 /* eslint-disable prettier/prettier */
 import { Delete, Param, ParseUUIDPipe, Patch } from '@nestjs/common';
 import { Body, Controller, Get, Post, Query, UseFilters } from '@nestjs/common/decorators';
-import { ApiOkResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { BadRequestExceptionValidation } from 'src/common/exception/badRequestExceptionValidation';
 import { ObjectNotFoundException } from 'src/common/exception/objectNotFoundException';
+import { ApiFilterQuery } from 'src/common/object/api-filter-query';
 import { Pagination } from 'src/common/object/pagination.object';
 import { ObjectResponse } from 'src/common/response/objectResponse';
 import { ObjectResponseCreate } from 'src/common/response/objectResponseCreate';
 import { ObjectResponseDelete } from 'src/common/response/objectResponseDelete';
 import { ObjectResponseUpdate } from 'src/common/response/objectResponseUpdate';
-import { FindManyOptions } from 'typeorm';
 import { CreateUserDTO, UpdateUserDTO } from './user.dto';
 import { User } from './user.entity';
 import { UserFilter } from './user.filter';
@@ -22,10 +22,11 @@ export class UserController {
 
   constructor(private readonly userService: UserService) { };
 
+  @ApiFilterQuery('filter', UserFilter)
+  @ApiFilterQuery('page', Pagination)
   @ApiResponse({ status: 200, type: ObjectResponse<User>, description: "A list of user" })
   @Get()
   async findAll(@Query('page') pagination: Pagination, @Query('filter') userFilter: UserFilter): Promise<ObjectResponse<User>> {
-    console.log(pagination);
     console.log(userFilter);
     return new ObjectResponse<User>(await this.userService.findAll(pagination, userFilter))
   }
@@ -74,3 +75,4 @@ export class UserController {
     return new ObjectResponseDelete(userId, 'The user has been deleted successfully');
   }
 }
+
