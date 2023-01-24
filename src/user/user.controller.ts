@@ -8,7 +8,6 @@ import { ApiFilterQuery } from 'src/common/object/api-filter-query';
 import { Pagination } from 'src/common/object/pagination.object';
 import { ObjectResponse } from 'src/common/response/objectResponse';
 import { ObjectResponseCreate } from 'src/common/response/objectResponseCreate';
-import { ObjectResponseDelete } from 'src/common/response/objectResponseDelete';
 import { ObjectResponseUpdate } from 'src/common/response/objectResponseUpdate';
 import { CreateUserDTO, UpdateUserDTO } from './user.dto';
 import { User } from './user.entity';
@@ -48,7 +47,7 @@ export class UserController {
     return new ObjectResponseCreate(await this.userService.create(createUserDTO), 'The user has been created successfully');
   }
 
-  @ApiResponse({ status: 201, type: ObjectResponseUpdate, description: "The user has been created successfully" })
+  @ApiResponse({ status: 200, type: ObjectResponseUpdate, description: "The user has been updated successfully" })
   @ApiResponse({ status: 404, type: ObjectNotFoundException, description: "No user found" })
   @Patch('/:id')
   async update(@Param('id', ParseUUIDPipe) userId: string, @Body() updateUserDTO: UpdateUserDTO) {
@@ -62,7 +61,7 @@ export class UserController {
   }
 
 
-  @ApiResponse({ status: 200, type: ObjectResponseDelete, description: "The user has been deleted successfully" })
+  @ApiResponse({ status: 200, type: ObjectResponseUpdate, description: "The user has been deleted successfully" })
   @ApiResponse({ status: 404, type: ObjectNotFoundException, description: "No user found" })
   @Delete('/:id')
   async delete(@Param('id', ParseUUIDPipe) userId: string) {
@@ -71,7 +70,7 @@ export class UserController {
       throw new ObjectNotFoundException('User not found with id : ' + userId, 404);
     }
     await this.userService.delete({ user_id: userId });
-    return new ObjectResponseDelete(userId, 'The user has been deleted successfully');
+    return new ObjectResponseUpdate(userId, 'The user has been deleted successfully');
   }
 }
 
