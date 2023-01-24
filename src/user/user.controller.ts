@@ -27,7 +27,6 @@ export class UserController {
   @ApiResponse({ status: 200, type: ObjectResponse<User>, description: "A list of user" })
   @Get()
   async findAll(@Query('page') pagination: Pagination, @Query('filter') userFilter: UserFilter): Promise<ObjectResponse<User>> {
-    console.log(userFilter);
     return new ObjectResponse<User>(await this.userService.findAll(pagination, userFilter))
   }
 

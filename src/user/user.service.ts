@@ -19,8 +19,6 @@ export class UserService {
       take: pagination.limit,
       where: userFilter.renderFilterOptionWhere(['user_id', 'active'], ['mail', 'firstname', 'lastname', 'pseudo'])
     };
-
-    console.log(options);
     return await this.userRepository.findAndCount(options);
   }
 
