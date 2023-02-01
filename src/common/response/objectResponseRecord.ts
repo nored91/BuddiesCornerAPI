@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class ObjectResponse<k>{
+export class ObjectResponseRecord<k>{
 
   @ApiProperty({ type: Number, description: 'Count of records', example: 12 })
   private count: number;

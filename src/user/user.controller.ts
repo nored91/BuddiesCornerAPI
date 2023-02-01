@@ -6,8 +6,8 @@ import { BadRequestExceptionValidation } from 'src/common/exception/badRequestEx
 import { ObjectNotFoundException } from 'src/common/exception/objectNotFoundException';
 import { ApiFilterQuery } from 'src/common/object/api-filter-query';
 import { Pagination } from 'src/common/object/pagination.object';
-import { ObjectResponse } from 'src/common/response/objectResponse';
 import { ObjectResponseCreate } from 'src/common/response/objectResponseCreate';
+import { ObjectResponseRecord } from 'src/common/response/objectResponseRecord';
 import { ObjectResponseUpdate } from 'src/common/response/objectResponseUpdate';
 import { CreateUserDTO, UpdateUserDTO } from './user.dto';
 import { User } from './user.entity';
@@ -23,10 +23,10 @@ export class UserController {
 
   @ApiFilterQuery('filter', UserFilter)
   @ApiFilterQuery('page', Pagination)
-  @ApiResponse({ status: 200, type: ObjectResponse<User>, description: "A list of user" })
+  @ApiResponse({ status: 200, type: ObjectResponseRecord<User>, description: "A list of user" })
   @Get()
   async findAll(@Query('page') pagination: Pagination, @Query('filter') userFilter: UserFilter): Promise<ObjectResponse<User>> {
-    return new ObjectResponse<User>(await this.userService.findAll(pagination, userFilter))
+    return new ObjectResponseRecord<User>(await this.userService.findAll(pagination, userFilter))
   }
 
   @ApiResponse({ status: 200, type: User, description: "Requested user" })
