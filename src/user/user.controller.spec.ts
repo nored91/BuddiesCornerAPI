@@ -9,7 +9,7 @@ import { CreateUserDTO, UpdateUserDTO } from './user.dto';
 import { AppModule } from '../app.module';
 import { ObjectResponseUpdate } from '../common/response/objectResponseUpdate';
 import { ObjectNotFoundException } from '../common/exception/objectNotFoundException';
-import { ObjectResponse } from '../common/response/objectResponse';
+import { ObjectResponseRecord } from '../common/response/objectResponseRecord';
 
 describe('UserController', () => {
   let userController: UserController;
@@ -39,7 +39,7 @@ describe('UserController', () => {
       const pagination: Pagination = { limit: 1, offset: 0 };
       const queryFilter: UserFilter = new UserFilter();
       const serviceResult: [User[], number] = [[], 0];
-      const controllerResult: ObjectResponse<User> = new ObjectResponse<User>(serviceResult);
+      const controllerResult: ObjectResponseRecord<User> = new ObjectResponseRecord<User>(serviceResult);
       jest.spyOn(userService, 'findAll').mockImplementation(async () => serviceResult);
       const result = await userController.findAll(pagination, queryFilter);
 

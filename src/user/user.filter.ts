@@ -1,10 +1,9 @@
+/* eslint-disable prettier/prettier */
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { IsBoolean, IsOptional, IsString, IsUUID } from "class-validator";
 import { Filter } from "../common/object/filter";
-import { FindOptionsWhere, ILike } from "typeorm";
 import { User } from "./user.entity";
-
 
 export class UserFilter extends Filter<User> {
 
