@@ -1,12 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Pagination } from '../common/object/pagination.object';
-import {
-  DeleteResult,
-  FindManyOptions,
-  FindOptionsWhere,
-  Repository,
-} from 'typeorm';
+import { DeleteResult, FindManyOptions, FindOptionsWhere, Repository } from 'typeorm';
 import { CreateUserDTO, UpdateUserDTO } from './user.dto';
 import { User } from './user.entity';
 import { UserFilter } from './user.filter';
@@ -15,7 +10,7 @@ import { UserFilter } from './user.filter';
 export class UserService {
   constructor(
     @InjectRepository(User)
-    private userRepository: Repository<User>,
+    private userRepository: Repository<User>
   ) {}
 
   // eslint-disable-next-line prettier/prettier
@@ -23,10 +18,7 @@ export class UserService {
     const options: FindManyOptions = {
       skip: pagination.offset,
       take: pagination.limit,
-      where: userFilter.renderFilterOptionWhere(
-        ['user_id', 'active'],
-        ['mail', 'firstname', 'lastname', 'pseudo'],
-      ),
+      where: userFilter.renderFilterOptionWhere(['user_id', 'active'], ['mail', 'firstname', 'lastname', 'pseudo'])
     };
     return await this.userRepository.findAndCount(options);
   }
