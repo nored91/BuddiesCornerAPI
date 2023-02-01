@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { IsBoolean, IsOptional, IsString, IsUUID } from "class-validator";
-import { Filter } from "src/common/object/filter";
+import { Filter } from "../common/object/filter";
 import { FindOptionsWhere, ILike } from "typeorm";
 import { User } from "./user.entity";
 

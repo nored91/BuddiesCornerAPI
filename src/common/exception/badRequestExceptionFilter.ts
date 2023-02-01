@@ -1,4 +1,4 @@
-import { ExceptionFilter, Catch, ArgumentsHost, BadRequestException, HttpException } from '@nestjs/common';
+import { ExceptionFilter, Catch, ArgumentsHost } from '@nestjs/common';
 import { BadRequestExceptionValidation } from './badRequestExceptionValidation';
 
 @Catch(BadRequestExceptionValidation)

@@ -2,17 +2,17 @@
 import { Delete, Param, ParseUUIDPipe, Patch } from '@nestjs/common';
 import { Body, Controller, Get, Post, Query, UseFilters } from '@nestjs/common/decorators';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import { BadRequestExceptionValidation } from 'src/common/exception/badRequestExceptionValidation';
-import { ObjectNotFoundException } from 'src/common/exception/objectNotFoundException';
-import { ApiFilterQuery } from 'src/common/object/api-filter-query';
-import { Pagination } from 'src/common/object/pagination.object';
-import { ObjectResponse } from 'src/common/response/objectResponse';
-import { ObjectResponseCreate } from 'src/common/response/objectResponseCreate';
-import { ObjectResponseUpdate } from 'src/common/response/objectResponseUpdate';
+import { BadRequestExceptionValidation } from '../common/exception/badRequestExceptionValidation';
+import { ObjectNotFoundException } from '../common/exception/objectNotFoundException';
+import { ApiFilterQuery } from '../common/object/api-filter-query';
+import { Pagination } from '../common/object/pagination.object';
+import { ObjectResponse } from '../common/response/objectResponse';
+import { ObjectResponseCreate } from '../common/response/objectResponseCreate';
+import { ObjectResponseUpdate } from '../common/response/objectResponseUpdate';
 import { CreateUserDTO, UpdateUserDTO } from './user.dto';
 import { User } from './user.entity';
 import { UserFilter } from './user.filter';
-import { UserService } from './user.service';
+import { UserService } from './user.service'
 
 @Controller('user')
 @ApiTags('User')
@@ -65,7 +65,7 @@ export class UserController {
   @ApiResponse({ status: 404, type: ObjectNotFoundException, description: "No user found" })
   @Delete('/:id')
   async delete(@Param('id', ParseUUIDPipe) userId: string) {
-    let user: User = await this.userService.findOne(userId);
+    const user: User = await this.userService.findOne(userId);
     if (user === null) {
       throw new ObjectNotFoundException('User not found with id : ' + userId, 404);
     }

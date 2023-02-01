@@ -1,5 +1,4 @@
-import { ExceptionFilter, Catch, ArgumentsHost, BadRequestException, HttpException, NotFoundException } from '@nestjs/common';
-import { BadRequestExceptionValidation } from './badRequestExceptionValidation';
+import { Catch, ArgumentsHost, HttpException } from '@nestjs/common';
 
 @Catch(ObjectNotFoundException)
 export class ObjectNotFoundException extends HttpException {

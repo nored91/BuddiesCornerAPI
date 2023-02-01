@@ -8,7 +8,7 @@ export class ObjectResponseCreate<k>{
   private record: k;
 
   constructor(record: k, message: string) {
-    this.message = message;
     this.record = record;
+    this.message = message;
   }
 }
