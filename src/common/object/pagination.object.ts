@@ -1,12 +1,11 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { Type } from "class-transformer";
-import { IsNumber, IsOptional } from "class-validator";
+import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+import { IsNumber, IsOptional } from 'class-validator';
 
 const LIMIT: number = 10;
 const OFFSET: number = 0;
 
 export class Pagination {
-
   @ApiProperty({ type: Number, description: 'pagination limit', example: 10, required: false, default: 10 })
   @IsOptional()
   @IsNumber()

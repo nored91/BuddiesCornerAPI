@@ -3,8 +3,12 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class User {
-
-  @ApiProperty({ type: 'uuid', description: 'user id', example: 'c7107dbc-b962-45c7-a8b3-3e660211ca21', required: true })
+  @ApiProperty({
+    type: 'uuid',
+    description: 'user id',
+    example: 'c7107dbc-b962-45c7-a8b3-3e660211ca21',
+    required: true
+  })
   @PrimaryGeneratedColumn('uuid')
   user_id: string;
 
@@ -32,7 +36,13 @@ export class User {
   @Column()
   active: boolean;
 
-  @ApiProperty({ type: Date, description: 'user creation date', example: '2023-01-16T14:33:20.000Z', default: 'date of the day', required: false })
+  @ApiProperty({
+    type: Date,
+    description: 'user creation date',
+    example: '2023-01-16T14:33:20.000Z',
+    default: 'date of the day',
+    required: false
+  })
   @Column()
   creation_date: Date;
 }

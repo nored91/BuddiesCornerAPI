@@ -17,8 +17,8 @@ export function ApiFilterQuery(fieldName: string, filterDto: Function) {
       explode: true,
       type: 'object',
       schema: {
-        $ref: getSchemaPath(filterDto),
-      },
-    }),
+        $ref: getSchemaPath(filterDto)
+      }
+    })
   );
 }

@@ -44,7 +44,7 @@ describe('UserController', () => {
   });
 
   describe('findAll', () => {
-    it('should return an array of User', async () => {
+    it('findAll should return an array of User', async () => {
       const pagination: Pagination = { limit: 1, offset: 0 };
       const queryFilter: UserFilter = new UserFilter();
       const serviceResult: [User[], number] = [[], 0];
@@ -59,7 +59,7 @@ describe('UserController', () => {
   });
 
   describe('findOne', () => {
-    it('should return one User', async () => {
+    it('findOne should return one User', async () => {
       const fakeId = user.user_id;
       jest.spyOn(userService, 'findOne').mockImplementation(async () => user);
 
@@ -79,7 +79,7 @@ describe('UserController', () => {
   });
 
   describe('create', () => {
-    it('should return created user', async () => {
+    it('create should return created user', async () => {
       const result: ObjectResponseCreate<User> = new ObjectResponseCreate<User>(
         user,
         'The user has been created successfully'
@@ -99,7 +99,7 @@ describe('UserController', () => {
   });
 
   describe('update', () => {
-    it('should return user_id a successful message', async () => {
+    it('update should return an user_id and a successful message', async () => {
       const result: ObjectResponseUpdate = new ObjectResponseUpdate(
         user.user_id,
         'The user has been updated successfully'
@@ -138,71 +138,29 @@ describe('UserController', () => {
         expect(e).toEqual(exception);
       }
     });
+  });
 
-    describe('update', () => {
-      it('should return user_id a successful message', async () => {
-        const result: ObjectResponseUpdate = new ObjectResponseUpdate(
-          user.user_id,
-          'The user has been updated successfully'
-        );
-        const dto: UpdateUserDTO = {
-          mail: 'fake@gmail.com',
-          firstname: 'fake',
-          lastname: 'fake',
-          pseudo: 'fake',
-          password: 'fake',
-          user_id: user.user_id,
-          active: true
-        };
-        jest.spyOn(userService, 'findOne').mockImplementation(async () => user);
-        jest.spyOn(userService, 'patch').mockImplementation(async () => user);
+  describe('delete', () => {
+    it('delete should return the user_id and a successful message of deletion', async () => {
+      const result: ObjectResponseUpdate = new ObjectResponseUpdate(
+        user.user_id,
+        'The user has been deleted successfully'
+      );
+      jest.spyOn(userService, 'findOne').mockImplementation(async () => user);
+      jest.spyOn(userService, 'delete').mockImplementation(async () => null);
 
-        expect(await userController.update(user.user_id, dto)).toEqual(result);
-      });
-
-      it('update should return a not found exception', async () => {
-        const exception = new ObjectNotFoundException('User not found with id : ' + user.user_id, 404);
-        const dto: UpdateUserDTO = {
-          mail: 'fake@gmail.com',
-          firstname: 'fake',
-          lastname: 'fake',
-          pseudo: 'fake',
-          password: 'fake',
-          user_id: user.user_id,
-          active: true
-        };
-        jest.spyOn(userService, 'findOne').mockImplementation(async () => null);
-
-        try {
-          await userController.update(user.user_id, dto);
-        } catch (e) {
-          expect(e).toEqual(exception);
-        }
-      });
+      expect(await userController.delete(user.user_id)).toEqual(result);
     });
 
-    describe('delete', () => {
-      it('should return the user_id and a successful message of deletion', async () => {
-        const result: ObjectResponseUpdate = new ObjectResponseUpdate(
-          user.user_id,
-          'The user has been deleted successfully'
-        );
-        jest.spyOn(userService, 'findOne').mockImplementation(async () => user);
-        jest.spyOn(userService, 'delete').mockImplementation(async () => null);
+    it('delete should return a not found exception', async () => {
+      const exception = new ObjectNotFoundException('User not found with id : ' + user.user_id, 404);
+      jest.spyOn(userService, 'findOne').mockImplementation(async () => null);
 
-        expect(await userController.delete(user.user_id)).toEqual(result);
-      });
-
-      it('delete should return a not found exception', async () => {
-        const exception = new ObjectNotFoundException('User not found with id : ' + user.user_id, 404);
-        jest.spyOn(userService, 'findOne').mockImplementation(async () => null);
-
-        try {
-          await userController.delete(user.user_id);
-        } catch (e) {
-          expect(e).toEqual(exception);
-        }
-      });
+      try {
+        await userController.delete(user.user_id);
+      } catch (e) {
+        expect(e).toEqual(exception);
+      }
     });
   });
 });
