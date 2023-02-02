@@ -6,14 +6,22 @@ import { User } from './user.entity';
 import { UserFilter } from './user.filter';
 import { ObjectResponseCreate } from '../common/response/objectResponseCreate';
 import { CreateUserDTO, UpdateUserDTO } from './user.dto';
-import { AppModule } from '../app.module';
 import { ObjectResponseUpdate } from '../common/response/objectResponseUpdate';
 import { ObjectNotFoundException } from '../common/exception/objectNotFoundException';
 import { ObjectResponseRecord } from '../common/response/objectResponseRecord';
+import { getRepositoryToken } from '@nestjs/typeorm';
+
+export const mockRepository = jest.fn(() => ({
+  metadata: {
+    columns: [],
+    relations: []
+  }
+}));
 
 describe('UserController', () => {
   let userController: UserController;
   let userService: UserService;
+
   const user: User = {
     user_id: '1',
     mail: 'fake@gmail.com',
@@ -27,7 +35,8 @@ describe('UserController', () => {
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [AppModule]
+      providers: [UserService, { useClass: mockRepository, provide: getRepositoryToken(User) }],
+      controllers: [UserController]
     }).compile();
 
     userService = await moduleRef.resolve(UserService);
