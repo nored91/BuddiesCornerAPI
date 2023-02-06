@@ -14,7 +14,7 @@ import { User } from './user/user.entity';
       database: 'buddiescorner',
       entities: [User],
       synchronize: false,
-      logging: true
+      logging: ["error","info","log"] //"query","schema","error","warn","info","log","migration"
     }),
     UserModule
   ],
