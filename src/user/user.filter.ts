@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { ApiProperty } from "@nestjs/swagger";
-import { Transform, Type } from "class-transformer";
+import { Transform } from "class-transformer";
 import { IsBoolean, IsOptional, IsString, IsUUID } from "class-validator";
 import { Filter } from "../common/object/filter";
 import { User } from "./user.entity";
@@ -33,9 +33,9 @@ export class UserFilter extends Filter<User> {
   public pseudo: string;
 
   @ApiProperty({ description: 'Filter by activation state', type: Boolean, example: true, required: false })
-  @IsBoolean()
   @IsOptional()
-  @Transform(({value}) => value === 'true' ? true : false)
+  @Transform(({value})=> { return JSON.parse(value); })
+  @IsBoolean()
   public active: boolean;
 
 }
