@@ -1,22 +1,41 @@
-import { Body, Injectable, Post } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Pagination } from '../common/object/pagination.object';
+import { DeleteResult, FindManyOptions, FindOptionsWhere, Repository } from 'typeorm';
+import { CreateUserDTO, UpdateUserDTO } from './user.dto';
 import { User } from './user.entity';
+import { UserFilter } from './user.filter';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
-    private userRepository: Repository<User>,
+    private userRepository: Repository<User>
   ) {}
 
-  findAll(): Promise<[User[], number]> {
-    return this.userRepository.findAndCount();
+  // eslint-disable-next-line prettier/prettier
+  async findAll(pagination: Pagination, userFilter: UserFilter): Promise<[User[], number]> {
+    const options: FindManyOptions = {
+      skip: pagination.offset,
+      take: pagination.limit,
+      where: userFilter.renderFilterOptionWhere(['user_id', 'active'], ['mail', 'firstname', 'lastname', 'pseudo'])
+    };
+    return await this.userRepository.findAndCount(options);
   }
 
-  findOne(id: string): Promise<User> {
-    return this.userRepository.findOneBy({ user_id: id });
+  async findOne(id: string): Promise<User> {
+    return await this.userRepository.findOneBy({ user_id: id });
   }
 
-  //create(UserDto: UserDto) { return null}
+  async create(createUserDTO: CreateUserDTO): Promise<User> {
+    return await this.userRepository.save(createUserDTO);
+  }
+
+  async patch(updateUserDTO: UpdateUserDTO): Promise<User> {
+    return await this.userRepository.save(updateUserDTO);
+  }
+
+  async delete(options: FindOptionsWhere<User>): Promise<DeleteResult> {
+    return await this.userRepository.delete(options);
+  }
 }
