@@ -139,6 +139,32 @@ describe('User',() => {
     }
   });
 
+  it('GetAll User with filter', async () => {
+    const response = await request(app.getHttpServer()).get('/user?filter[active]=true&filter[mail]=gmail.com');
+    expect(response.statusCode).toEqual(200);
+    const responseJson = JSON.parse(response.text);
+    expect(responseJson.count).toBeDefined();
+    expect(responseJson.count).toEqual(2);
+    expect(responseJson.records).toBeDefined();
+    expect(responseJson.records.length).toEqual(2);
+    for(let record of responseJson.records){
+      expect(record.active).toBe(true);
+      expect(record.mail).toMatch('gmail.com');
+    }
+  });
+
+    it('GetAll User validation error', async () => {
+    const response = await request(app.getHttpServer()).get('/user?filter[active]=test&filter[user_id]=1111');
+    console.log(response);
+    expect(response.statusCode).toEqual(200);
+    const responseJson = JSON.parse(response.text);
+    for(let record of responseJson.records){
+      expect(record.active).toBe(true);
+      expect(record.mail).toMatch('gmail.com');
+    }
+  });
+
+
   afterAll(async () => {
     for(let user of userlist){
       await userRepository.delete(user);
