@@ -1,14 +1,14 @@
-import { UserController } from './user.controller';
-import { UserService } from './user.service';
+import { UserController } from '../user.controller';
+import { UserService } from '../user.service';
 import { Test } from '@nestjs/testing';
-import { Pagination } from '../common/object/pagination.object';
-import { User } from './user.entity';
-import { UserFilter } from './user.filter';
-import { ObjectResponseCreate } from '../common/response/objectResponseCreate';
-import { CreateUserDTO, UpdateUserDTO } from './user.dto';
-import { ObjectResponseUpdate } from '../common/response/objectResponseUpdate';
-import { ObjectNotFoundException } from '../common/exception/objectNotFoundException';
-import { ObjectResponseRecord } from '../common/response/objectResponseRecord';
+import { Pagination } from '../../common/object/pagination.object';
+import { User } from '../user.entity';
+import { UserFilter } from '../user.filter';
+import { ObjectResponseCreate } from '../../common/response/objectResponseCreate';
+import { CreateUserDTO, UpdateUserDTO } from '../user.dto';
+import { ObjectResponseUpdate } from '../../common/response/objectResponseUpdate';
+import { ObjectNotFoundException } from '../../common/exception/objectNotFoundException';
+import { ObjectResponseRecord } from '../../common/response/objectResponseRecord';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 export const mockRepository = jest.fn(() => ({

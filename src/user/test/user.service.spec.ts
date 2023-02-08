@@ -1,12 +1,12 @@
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { AppModule } from '../app.module';
+import { AppModule } from '../../app.module';
 import { DeleteResult, Repository } from 'typeorm';
-import { Pagination } from '../common/object/pagination.object';
-import { User } from './user.entity';
-import { UserFilter } from './user.filter';
-import { UserService } from './user.service';
-import { CreateUserDTO, UpdateUserDTO } from './user.dto';
+import { Pagination } from '../../common/object/pagination.object';
+import { User } from '../user.entity';
+import { UserFilter } from '../user.filter';
+import { UserService } from '../user.service';
+import { CreateUserDTO, UpdateUserDTO } from '../user.dto';
 
 describe('userService', () => {
   let userRepository: Repository<User>;
@@ -86,9 +86,9 @@ describe('userService', () => {
 
   describe('delete', () => {
     it('delete should be called succesfully', async () => {
-      const result:DeleteResult = {raw:1,affected:1}
+      const result: DeleteResult = { raw: 1, affected: 1 };
       jest.spyOn(userRepository, 'delete').mockImplementationOnce(async () => result);
-      expect(await userService.delete({ user_id: user.user_id})).toEqual(result);
+      expect(await userService.delete({ user_id: user.user_id })).toEqual(result);
     });
   });
 });

@@ -1,13 +1,13 @@
 import { INestApplication, ValidationError, ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { AppModule } from '../app.module';
+import { AppModule } from '../../app.module';
 import * as request from 'supertest';
-import { BadRequestExceptionValidation } from '../common/exception/badRequestExceptionValidation';
-import { User } from './user.entity';
+import { BadRequestExceptionValidation } from '../../common/exception/badRequestExceptionValidation';
+import { User } from '../user.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { LIMIT } from '../common/object/pagination.object';
-import { BadRequestExceptionFilter } from '../common/exception/badRequestExceptionFilter';
-import { QueryFailedErrorException } from '../common/exception/queryFailledErrorException';
+import { LIMIT } from '../../common/object/pagination.object';
+import { BadRequestExceptionFilter } from '../../common/exception/badRequestExceptionFilter';
+import { QueryFailedErrorException } from '../../common/exception/queryFailledErrorException';
 
 describe('User', () => {
   let app: INestApplication;
