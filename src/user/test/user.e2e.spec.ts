@@ -8,6 +8,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { LIMIT } from '../../common/object/pagination.object';
 import { BadRequestExceptionFilter } from '../../common/exception/badRequestExceptionFilter';
 import { QueryFailedErrorException } from '../../common/exception/queryFailledErrorException';
+import { CreateUserDTO, UpdateUserDTO } from '../user.dto';
 
 describe('User', () => {
   let app: INestApplication;
@@ -222,11 +223,67 @@ describe('User', () => {
     });
   });
 
-  describe('Create user', () => {});
+  describe('Create user', () => {
+    const dto: CreateUserDTO = {
+      mail: 'fake5@gmail.com',
+      firstname: 'fake',
+      lastname: 'fake',
+      pseudo: 'fake',
+      password: 'fake'
+    };
+
+    it('create valid user', async () => {
+      const response = await request(app.getHttpServer()).post('/user').send(dto);
+      expect(response.statusCode).toEqual(201);
+      const responseJson = response.body;
+      userlist.push(responseJson.record);
+
+      expect(responseJson.message).toBe('The user has been created successfully');
+      expect(responseJson.record).toBeDefined;
+      expect(responseJson.record.mail).toBe(dto.mail);
+      expect(responseJson.record.firstname).toBe(dto.firstname);
+      expect(responseJson.record.lastname).toBe(dto.lastname);
+      expect(responseJson.record.password).toBe(dto.password);
+      expect(responseJson.record.pseudo).toBe(dto.pseudo);
+      expect(responseJson.record.user_id).not.toBeNull();
+      expect(responseJson.record.creation_date).not.toBeNull();
+      expect(responseJson.record.active).toBe(false);
+    });
+
+    it('create user with already used email', async () => {
+      const response = await request(app.getHttpServer()).post('/user').send(dto);
+      expect(response.statusCode).toEqual(500);
+      const responseJson = response.body;
+      expect(responseJson.message).toBe('duplicate key value violates unique constraint "user_mail_key"');
+      expect(responseJson.path).toBe('/user');
+    });
+  });
+
+  describe('Update user', () => {
+    const dto: Partial<UpdateUserDTO> = {
+      lastname: 'fakeUpdate'
+    };
+
+    it('Update pseudo for existing user', async () => {
+      const user = userlist[0];
+      const response = await request(app.getHttpServer())
+        .patch('/user/' + user.user_id)
+        .send(dto);
+      expect(response.statusCode).toEqual(200);
+      const responseJson = response.body;
+      expect(responseJson.message).toBe('The user has been updated successfully');
+      expect(responseJson.id).toBe(user.user_id);
+
+      const responseGet = await request(app.getHttpServer()).get('/user/' + user.user_id);
+      expect(responseGet.statusCode).toEqual(200);
+      const responseGetJson = responseGet.body;
+      expect(responseGetJson.lastname).toBe(dto.lastname);
+    });
+  });
 
   afterAll(async () => {
     for (let user of userlist) {
-      await userRepository.delete(user);
+      await userRepository.delete(user.user_id);
     }
     await app.close();
   });

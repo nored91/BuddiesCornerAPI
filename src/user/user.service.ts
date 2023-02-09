@@ -28,7 +28,8 @@ export class UserService {
   }
 
   async create(createUserDTO: CreateUserDTO): Promise<User> {
-    return await this.userRepository.save(createUserDTO);
+    const user = await this.userRepository.save(createUserDTO);
+    return await this.userRepository.findOneBy({ user_id: user.user_id });
   }
 
   async patch(updateUserDTO: UpdateUserDTO): Promise<User> {
