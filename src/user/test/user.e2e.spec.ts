@@ -279,6 +279,50 @@ describe('User', () => {
       const responseGetJson = responseGet.body;
       expect(responseGetJson.lastname).toBe(dto.lastname);
     });
+
+    it('Try to update non-existing user', async () => {
+      const fakeId = '39048102-0e9b-46c7-9dd6-de34169e3111';
+      const response = await request(app.getHttpServer())
+        .patch('/user/' + fakeId)
+        .send(dto);
+      expect(response.statusCode).toEqual(404);
+      const responseJson = response.body;
+      expect(responseJson.message).toBe('User not found with id : ' + fakeId);
+      expect(responseJson.path).toBe('/user/' + fakeId);
+    });
+
+    it('Try to update user with existing email', async () => {
+      const user = userlist[0];
+      const dto: Partial<UpdateUserDTO> = {
+        mail: userlist[1].mail
+      };
+      const response = await request(app.getHttpServer())
+        .patch('/user/' + user.user_id)
+        .send(dto);
+      expect(response.statusCode).toEqual(500);
+      const responseJson = response.body;
+      expect(responseJson.message).toBe('duplicate key value violates unique constraint "user_mail_key"');
+      expect(responseJson.path).toBe('/user/' + user.user_id);
+    });
+  });
+
+  describe('delete user', () => {
+    it('valid deletion of an user', async () => {
+      const user = userlist.pop();
+      const response = await request(app.getHttpServer()).delete('/user/' + user.user_id);
+      expect(response.statusCode).toEqual(200);
+      const responseJson = response.body;
+      expect(responseJson.message).toBe('The user has been deleted successfully');
+      expect(responseJson.id).toBe(user.user_id);
+    });
+    it('valid deletion of an user', async () => {
+      const fakeId = '39048102-0e9b-46c7-9dd6-de34169e3111';
+      const response = await request(app.getHttpServer()).delete('/user/' + fakeId);
+      expect(response.statusCode).toEqual(404);
+      const responseJson = response.body;
+      expect(responseJson.message).toBe('User not found with id : ' + fakeId);
+      expect(responseJson.path).toBe('/user/' + fakeId);
+    });
   });
 
   afterAll(async () => {

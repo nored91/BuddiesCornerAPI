@@ -14,11 +14,11 @@ import { User } from './user/user.entity';
       database: 'buddiescorner',
       entities: [User],
       synchronize: false,
-      logging: ["error","info","log"] //"query","schema","error","warn","info","log","migration"
+      logging: ['error', 'info', 'log'] //"query","schema","error","warn","info","log","migration"
     }),
     UserModule
   ],
   controllers: [],
-  providers: [],
+  providers: []
 })
-export class AppModule { }
+export class AppModule {}

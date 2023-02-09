@@ -62,6 +62,7 @@ describe('userService', () => {
         password: 'fake'
       };
       jest.spyOn(userRepository, 'save').mockImplementationOnce(async () => user);
+      jest.spyOn(userRepository, 'findOneBy').mockImplementationOnce(async () => user);
 
       expect(await userService.create(dto)).toEqual(user);
     });
