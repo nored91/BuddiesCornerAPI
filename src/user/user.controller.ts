@@ -12,26 +12,24 @@ import { ObjectResponseUpdate } from '../common/response/objectResponseUpdate';
 import { CreateUserDTO, UpdateUserDTO } from './user.dto';
 import { User } from './user.entity';
 import { UserFilter } from './user.filter';
-import { UserService } from './user.service'
-import { cp } from 'fs';
+import { UserService } from './user.service';
 
 @Controller('user')
 @ApiTags('User')
 @UseFilters(ObjectNotFoundException)
 export class UserController {
-
-  constructor(private readonly userService: UserService) { };
+  constructor(private readonly userService: UserService) {}
 
   @ApiFilterQuery('filter', UserFilter)
   @ApiFilterQuery('page', Pagination)
-  @ApiResponse({ status: 200, type: ObjectResponseRecord<User>, description: "A list of user" })
+  @ApiResponse({ status: 200, type: ObjectResponseRecord<User>, description: 'A list of user' })
   @Get()
   async findAll(@Query('page') pagination: Pagination, @Query('filter') userFilter: UserFilter): Promise<ObjectResponseRecord<User>> {
-    return new ObjectResponseRecord<User>(await this.userService.findAll(pagination, userFilter))
+    return new ObjectResponseRecord<User>(await this.userService.findAll(pagination, userFilter));
   }
 
-  @ApiResponse({ status: 200, type: User, description: "Requested user" })
-  @ApiResponse({ status: 404, type: ObjectNotFoundException, description: "No user found" })
+  @ApiResponse({ status: 200, type: User, description: 'Requested user' })
+  @ApiResponse({ status: 404, type: ObjectNotFoundException, description: 'No user found' })
   @Get('/:id')
   async findOne(@Param('id', ParseUUIDPipe) userId: string) {
     const user: User = await this.userService.findOne(userId);
@@ -41,15 +39,15 @@ export class UserController {
     return user;
   }
 
-  @ApiResponse({ status: 201, type: ObjectResponseCreate<User>, description: "The user has been created successfully" })
-  @ApiResponse({ status: 400, type: BadRequestExceptionValidation, description: "Bad Request - Validation failed" })
+  @ApiResponse({ status: 201, type: ObjectResponseCreate<User>, description: 'The user has been created successfully' })
+  @ApiResponse({ status: 400, type: BadRequestExceptionValidation, description: 'Bad Request - Validation failed' })
   @Post()
   async create(@Body() createUserDTO: CreateUserDTO): Promise<ObjectResponseCreate<User>> {
     return new ObjectResponseCreate(await this.userService.create(createUserDTO), 'The user has been created successfully');
   }
 
-  @ApiResponse({ status: 200, type: ObjectResponseUpdate, description: "The user has been updated successfully" })
-  @ApiResponse({ status: 404, type: ObjectNotFoundException, description: "No user found" })
+  @ApiResponse({ status: 200, type: ObjectResponseUpdate, description: 'The user has been updated successfully' })
+  @ApiResponse({ status: 404, type: ObjectNotFoundException, description: 'No user found' })
   @Patch('/:id')
   async update(@Param('id', ParseUUIDPipe) userId: string, @Body() updateUserDTO: UpdateUserDTO) {
     updateUserDTO.user_id = userId;
@@ -58,12 +56,11 @@ export class UserController {
       throw new ObjectNotFoundException('User not found with id : ' + userId, 404);
     }
     user = await this.userService.patch(updateUserDTO);
-    return new ObjectResponseUpdate(user.user_id, 'The user has been updated successfully')
+    return new ObjectResponseUpdate(user.user_id, 'The user has been updated successfully');
   }
 
-
-  @ApiResponse({ status: 200, type: ObjectResponseUpdate, description: "The user has been deleted successfully" })
-  @ApiResponse({ status: 404, type: ObjectNotFoundException, description: "No user found" })
+  @ApiResponse({ status: 200, type: ObjectResponseUpdate, description: 'The user has been deleted successfully' })
+  @ApiResponse({ status: 404, type: ObjectNotFoundException, description: 'No user found' })
   @Delete('/:id')
   async delete(@Param('id', ParseUUIDPipe) userId: string) {
     const user: User = await this.userService.findOne(userId);
@@ -74,4 +71,3 @@ export class UserController {
     return new ObjectResponseUpdate(userId, 'The user has been deleted successfully');
   }
 }
-
