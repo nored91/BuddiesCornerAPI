@@ -16,9 +16,30 @@ export class EventService {
   // eslint-disable-next-line prettier/prettier
   async findAll(pagination: Pagination, eventFilter: EventFilter): Promise<[Event[], number]> {
     const options: FindManyOptions = {
+      select: [
+        'event_id',
+        'type',
+        'title',
+        'description',
+        'location',
+        'creation_date',
+        'event_date',
+        'creator_user.user_id',
+        'creator_user.firstname',
+        'creator_user.lastname'
+      ],
       skip: pagination.offset,
+      relations: ['creator_user'],
+      relationLoadStrategy: 'query',
       take: pagination.limit,
-      where: eventFilter.renderFilterOptionWhere(['event_id', 'active'], ['mail', 'firstname', 'lastname', 'pseudo'])
+      where: eventFilter.renderFilterOptionWhere(
+        ['event_id', 'group_id', 'type'],
+        ['title', 'description', 'creation_date', 'event_date'],
+        [
+          { relation: 'creator_user', fields: ['user_id', 'firstname', 'lastname'] }
+          //{ table: 'group', fields: ['group_id', 'title'] }
+        ]
+      )
     };
     return await this.eventRepository.findAndCount(options);
   }

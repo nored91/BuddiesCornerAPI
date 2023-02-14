@@ -18,7 +18,7 @@ export class UserService {
     const options: FindManyOptions = {
       skip: pagination.offset,
       take: pagination.limit,
-      where: userFilter.renderFilterOptionWhere(['user_id', 'active'], ['mail', 'firstname', 'lastname', 'pseudo'])
+      where: userFilter.renderFilterOptionWhere(['user_id', 'active'], ['mail', 'firstname', 'lastname', 'pseudo'], [])
     };
     return await this.userRepository.findAndCount(options);
   }

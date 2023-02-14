@@ -1,10 +1,11 @@
 /* eslint-disable prettier/prettier */
 import { ApiProperty } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
-import { IsBoolean, IsOptional, IsString, IsUUID, ValidationError } from 'class-validator';
-import { BadRequestExceptionValidation } from '../common/exception/badRequestExceptionValidation';
+import { Type } from 'class-transformer';
+import { IsDate, IsEnum, IsOptional, IsString, IsUUID, Length, ValidateNested } from 'class-validator';
 import { Filter } from '../common/object/filter';
-import { Event } from './event.entity';
+import { User } from '../user/user.entity';
+import { UserFilter } from '../user/user.filter';
+import { Event, EventType } from './event.entity';
 
 export class EventFilter extends Filter<Event> {
   @ApiProperty({
@@ -19,41 +20,57 @@ export class EventFilter extends Filter<Event> {
   public event_id: string;
 
   @ApiProperty({
-    name: 'mail',
-    description: 'Filter by mail',
-    type: String,
-    example: 'toto.test@gmail.com',
+    name: 'user',
+    description: 'Filter on creator user (fields : user_id, firstname & lastname)',
+    type: UserFilter,
+    example: '',
     required: false
   })
-  @IsString()
   @IsOptional()
-  public mail: string;
+  @ValidateNested({ each: true })
+  @Type(() => UserFilter)
+  public creator_user: UserFilter;
 
-  @ApiProperty({ description: 'Filter by firstname', type: String, example: 'Jean-René', required: false })
-  @IsString()
-  @IsOptional()
-  public firstname: string;
-
-  @ApiProperty({ description: 'Filter by lastname', type: String, example: 'Dupont', required: false })
-  @IsString()
-  @IsOptional()
-  public lastname: string;
-
-  @ApiProperty({ description: 'Filter by pseudo', type: String, example: 'RobertDu38', required: false })
-  @IsString()
-  @IsOptional()
-  public pseudo: string;
-
-  @ApiProperty({ description: 'Filter by activation state', type: Boolean, example: true, required: false })
-  @IsOptional()
-  @Transform(({ value }) => {
-    try {
-      return JSON.parse(value);
-    } catch (e) {
-      let error: ValidationError[] = [{ property: 'active', constraints: { active: 'active must be a boolean value' } }];
-      throw new BadRequestExceptionValidation(error);
-    }
+  @ApiProperty({
+    name: 'group_id',
+    description: 'Filter by group',
+    type: String,
+    example: '312a9f8f-5317-4dde-ba2d-a91fd98f3e09',
+    required: false
   })
-  @IsBoolean()
-  public active: boolean;
+  @IsUUID()
+  @IsOptional()
+  public group_id: string;
+
+  @ApiProperty({ description: 'Filter by title', type: String, example: 'Soirée au labo', required: false })
+  @IsString()
+  @IsOptional()
+  public title: string;
+
+  @ApiProperty({ description: 'Filter by description', type: String, example: 'Escalade', required: false })
+  @IsOptional()
+  @IsString()
+  @Length(1, 250)
+  public description: string;
+
+  @ApiProperty({ description: 'Filter by location', type: String, example: 'Grenoble', required: false })
+  @IsOptional()
+  @IsString()
+  @Length(1, 255)
+  public location: string;
+
+  @ApiProperty({ description: 'Filter by event date', type: Date, example: '2023-01-16', required: false })
+  @IsOptional()
+  @IsDate()
+  public event_date: string;
+
+  @ApiProperty({ description: 'Filter by creation date', type: Date, example: '2023-01-16', required: false })
+  @IsOptional()
+  @IsDate()
+  public creation_date: string;
+
+  @ApiProperty({ description: 'Filter by event type', isArray: true, enum: EventType, example: Object.keys(EventType), required: false })
+  @IsOptional()
+  @IsEnum(EventType)
+  public type: EventType;
 }

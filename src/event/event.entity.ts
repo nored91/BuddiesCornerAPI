@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { User } from '../user/user.entity';
 
 export enum EventType {}
 
@@ -20,7 +21,8 @@ export class Event {
     example: '312a9f8f-5317-4dde-ba2d-a91fd98f3e09',
     required: true
   })
-  @PrimaryGeneratedColumn('uuid')
+  //@ManyToOne(() => Group)
+  @JoinColumn({ name: 'group_id', referencedColumnName: 'group_id' })
   group_id: string;
 
   @ApiProperty({
@@ -29,8 +31,9 @@ export class Event {
     example: '39048102-0e9b-46c7-9dd6-de34169e3ee1',
     required: true
   })
-  @PrimaryGeneratedColumn('uuid')
-  creator_user_id: string;
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'creator_user_id', referencedColumnName: 'user_id' })
+  creator_user: User;
 
   @ApiProperty({
     type: 'enum',
@@ -42,7 +45,7 @@ export class Event {
     type: 'enum',
     enum: EventType
   })
-  event: EventType;
+  type: EventType;
 
   @ApiProperty({ type: String, description: 'title', example: 'sortie', required: true })
   @Column()
