@@ -3,8 +3,8 @@ INSERT INTO "user" (mail,firstname,lastname,pseudo,password,active) VALUES ('not
 INSERT INTO "user" (mail,firstname,lastname,pseudo,password,active) VALUES ('activated@test.fr','test','test','test dude','',true);
 INSERT INTO "user" (mail,firstname,lastname,pseudo,password,active) VALUES ('legraskevin@outlook.com','kevin','legras','keke','',true);
 
-INSERT INTO "group" (title) VALUES ('On va au bloc');
-INSERT INTO "group" (title) VALUES ('Au bar');
+INSERT INTO "group" (title,description) VALUES ('On va au bloc','groupe escalade');
+INSERT INTO "group" (title,description) VALUES ('Au bar','groupe de la boisson');
 INSERT INTO "group" (title) VALUES ('Vacance');
 
 INSERT INTO group_user VALUES (
