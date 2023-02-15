@@ -138,7 +138,7 @@ describe('Group', () => {
       }
     });
 
-    it('GetAll Group with wrong boolean filter', async () => {
+    it('GetAll Group with wrong title filter', async () => {
       const response = await request(app.getHttpServer()).get(
         '/group?filter[title]=ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt'
       );
@@ -217,7 +217,7 @@ describe('Group', () => {
       title: 'fakeUpdate'
     };
 
-    it('Update pseudo for existing group', async () => {
+    it('Update title for existing group', async () => {
       const group = grouplist[0];
       const response = await request(app.getHttpServer())
         .patch('/group/' + group.group_id)
