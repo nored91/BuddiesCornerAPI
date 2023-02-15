@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { User } from './user/user.entity';
+import { GroupModule } from './group/group.module';
+import { Group } from './group/group.entity';
 
 @Module({
   imports: [
@@ -12,11 +14,12 @@ import { User } from './user/user.entity';
       username: 'postgres',
       password: 'postgres',
       database: 'buddiescorner',
-      entities: [User],
+      entities: [User, Group],
       synchronize: false,
       logging: ['error', 'info', 'log'] //"query","schema","error","warn","info","log","migration"
     }),
-    UserModule
+    UserModule,
+    GroupModule
   ],
   controllers: [],
   providers: []
