@@ -5,6 +5,7 @@ import { DeleteResult, FindManyOptions, FindOptionsWhere, Repository } from 'typ
 import { CreateGroupDTO, UpdateGroupDTO } from './group.dto';
 import { Group } from './group.entity';
 import { GroupFilter } from './group.filter';
+import { TypeRelation } from '../common/object/filter';
 
 @Injectable()
 export class GroupService {
@@ -15,10 +16,17 @@ export class GroupService {
 
   // eslint-disable-next-line prettier/prettier
   async findAll(pagination: Pagination, groupFilter: GroupFilter): Promise<[Group[], number]> {
+    const groupFilterOption = {
+      optionFilter: [
+        { typeRelation: TypeRelation.Eq, fields: ['group_id'] },
+        { typeRelation: TypeRelation.Ilike, fields: ['title', 'description'] }
+      ]
+    };
+
     const options: FindManyOptions = {
       skip: pagination.offset,
       take: pagination.limit,
-      where: groupFilter.renderFilterOptionWhere(['group_id'], ['title', 'description'])
+      where: groupFilter.renderFilterOptionWhere([groupFilterOption])
     };
     return await this.groupRepository.findAndCount(options);
   }

@@ -11,7 +11,7 @@ export class BadRequestExceptionValidation extends BadRequestException {
 
   public parseValidationError(ValidationErrors: ValidationError[]) {
     ValidationErrors.forEach((val) => {
-      if (val.children.length > 0) {
+      if (val.children && val.children.length > 0) {
         this.parseValidationError(val.children);
       }
       if (val.constraints) {
