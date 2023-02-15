@@ -6,19 +6,20 @@ export class BadRequestExceptionValidation extends BadRequestException {
   constructor(ValidationErrors: ValidationError[]) {
     super('Bad Request - Validation failed');
     this.validationErrorsMessage = [];
-    console.log(ValidationErrors);
-    ValidationErrors.forEach((val) => {
-      let validationErrorMessage = new ValidationErrorMessage();
-      /*if (val.children.length > 0) {
-        validationErrorMessage.fieldName = val.children.;
-      }
-      else{
-        validationErrorMessage.fieldName = val.property;
-      }*/
-      validationErrorMessage.fieldName = val.property;
+    this.parseValidationError(ValidationErrors);
+  }
 
-      validationErrorMessage.propertyErrors = Object.values(val.constraints);
-      this.validationErrorsMessage.push(validationErrorMessage);
+  public parseValidationError(ValidationErrors: ValidationError[]) {
+    ValidationErrors.forEach((val) => {
+      if (val.children.length > 0) {
+        this.parseValidationError(val.children);
+      }
+      if (val.constraints) {
+        let validationErrorMessage = new ValidationErrorMessage();
+        validationErrorMessage.fieldName = val.property;
+        validationErrorMessage.propertyErrors = Object.values(val.constraints);
+        this.validationErrorsMessage.push(validationErrorMessage);
+      }
     });
   }
 }

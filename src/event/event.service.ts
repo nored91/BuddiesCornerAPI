@@ -15,7 +15,7 @@ export class EventService {
 
   // eslint-disable-next-line prettier/prettier
   async findAll(pagination: Pagination, eventFilter: EventFilter): Promise<[Event[], number]> {
-    const options: FindManyOptions = {
+    let options: FindManyOptions = {
       select: [
         'event_id',
         'type',
@@ -31,16 +31,16 @@ export class EventService {
       skip: pagination.offset,
       relations: ['creator_user'],
       relationLoadStrategy: 'query',
-      take: pagination.limit,
-      where: eventFilter.renderFilterOptionWhere(
+      take: pagination.limit
+    };
+
+    if (Object.keys(eventFilter).length > 0) {
+      options.where = eventFilter.renderFilterOptionWhere(
         ['event_id', 'group_id', 'type'],
         ['title', 'description', 'creation_date', 'event_date'],
-        [
-          { relation: 'creator_user', fields: ['user_id', 'firstname', 'lastname'] }
-          //{ table: 'group', fields: ['group_id', 'title'] }
-        ]
-      )
-    };
+        [{ relation: 'creator_user', fields: ['user_id', 'firstname', 'lastname'] }]
+      );
+    }
     return await this.eventRepository.findAndCount(options);
   }
 
