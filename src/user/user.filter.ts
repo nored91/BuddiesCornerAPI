@@ -3,10 +3,10 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { IsBoolean, IsOptional, IsString, IsUUID, ValidationError } from 'class-validator';
 import { BadRequestExceptionValidation } from '../common/exception/badRequestExceptionValidation';
-import { Filter } from '../common/object/filter';
+import { GenericFilter } from '../common/object/filter';
 import { User } from './user.entity';
 
-export class UserFilter extends Filter<User> {
+export class UserFilter extends GenericFilter<User> {
   @ApiProperty({
     name: 'user_id',
     description: 'Filter by user id',
@@ -50,9 +50,7 @@ export class UserFilter extends Filter<User> {
     try {
       return JSON.parse(value);
     } catch (e) {
-      let error: ValidationError[] = [
-        { property: 'active', constraints: { active: 'active must be a boolean value' } }
-      ];
+      let error: ValidationError[] = [{ property: 'active', constraints: { active: 'active must be a boolean value' } }];
       throw new BadRequestExceptionValidation(error);
     }
   })

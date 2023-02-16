@@ -1,18 +1,74 @@
-import { FindOptionsWhere, ILike } from 'typeorm';
+import { FindOperator, FindOptionsWhere, ILike } from 'typeorm';
+
+export enum TypeRelation {
+  Ilike,
+  Eq
+}
+
+export interface EntityTypeFilter {
+  relation?: string;
+  fields: string[];
+  typeRelation: TypeRelation;
+}
+
+export interface EntityFilter {
+  entityTypeFilter: EntityTypeFilter[];
+}
+
+export class GenericFilter<k> {}
 
 export class Filter<k> {
-  renderFilterOptionWhere(eqColumns: string[], ilikeColumns: string[]) {
-    const optionsWhere: FindOptionsWhere<k> = {};
-    eqColumns.forEach((val) => {
-      if (this[val] != undefined) {
-        optionsWhere[val] = this[val];
+  bodyFilter: GenericFilter<k>;
+  optionsWhere: FindOptionsWhere<k>;
+  entityFilter: EntityFilter;
+
+  constructor(bodyFilter: GenericFilter<k>, entityFilter: EntityFilter) {
+    this.entityFilter = entityFilter;
+    this.bodyFilter = bodyFilter;
+    this.optionsWhere = {};
+  }
+
+  renderFilterOptionWhere(): FindOptionsWhere<k> {
+    Object.keys(this.bodyFilter).forEach((propertyName: string) => {
+      if (typeof this.bodyFilter[propertyName] === 'object') {
+        Object.keys(this.bodyFilter[propertyName]).forEach((propertyNameRelation: string) => {
+          this.constructOptionWhere(propertyNameRelation, propertyName);
+        });
+      } else {
+        this.constructOptionWhere(propertyName);
       }
     });
-    ilikeColumns.forEach((val) => {
-      if (this[val]) {
-        optionsWhere[val] = ILike('%' + this[val] + '%');
-      }
-    });
-    return optionsWhere;
+    return this.optionsWhere;
+  }
+
+  constructOptionWhere(propertyName: string, relation?: string): void {
+    const entityTypeFilter: EntityTypeFilter = this.entityFilter.entityTypeFilter
+      .filter((entityTypeFilter: EntityTypeFilter) => {
+        if (entityTypeFilter.fields.includes(propertyName) && (!entityTypeFilter.relation || entityTypeFilter.relation === relation)) {
+          return true;
+        }
+      })
+      .pop();
+
+    if (relation) {
+      if (!this.optionsWhere[relation]) this.optionsWhere[relation] = {};
+      this.optionsWhere[relation][propertyName] = this.formatFilterValue(
+        entityTypeFilter.typeRelation,
+        this.bodyFilter[relation][propertyName]
+      );
+    } else {
+      this.optionsWhere[propertyName] = this.formatFilterValue(entityTypeFilter.typeRelation, this.bodyFilter[propertyName]);
+    }
+  }
+
+  formatFilterValue(typeRelation: TypeRelation, values: string): string | FindOperator<string> {
+    switch (typeRelation) {
+      case TypeRelation.Eq:
+        return values;
+      case TypeRelation.Ilike:
+        return ILike('%' + values + '%');
+      default:
+        return values;
+    }
   }
 }

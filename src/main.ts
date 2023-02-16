@@ -8,16 +8,18 @@ import { QueryFailedErrorException } from './common/exception/queryFailledErrorE
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new ValidationPipe({
-    whitelist: true,
-    forbidNonWhitelisted: true,
-    enableDebugMessages: true,
-    transform: true,
-    exceptionFactory: (validationErrors: ValidationError[] = []) => {
-      return new BadRequestExceptionValidation(validationErrors);
-    }
-  }));
-  app.useGlobalFilters(new BadRequestExceptionFilter(), new QueryFailedErrorException())
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      enableDebugMessages: true,
+      transform: true,
+      exceptionFactory: (validationErrors: ValidationError[] = []) => {
+        return new BadRequestExceptionValidation(validationErrors);
+      }
+    })
+  );
+  app.useGlobalFilters(new BadRequestExceptionFilter(), new QueryFailedErrorException());
 
   const config = new DocumentBuilder()
     .setTitle('Buddies Corner API')
