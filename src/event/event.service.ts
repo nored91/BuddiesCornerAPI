@@ -27,10 +27,13 @@ export class EventService {
         'event_date',
         'creator_user.user_id',
         'creator_user.firstname',
-        'creator_user.lastname'
+        'creator_user.lastname',
+        'group.group_id',
+        'group.title',
+        'group.description'
       ],
       skip: pagination.offset,
-      relations: ['creator_user'],
+      relations: ['creator_user', 'group'],
       relationLoadStrategy: 'query',
       take: pagination.limit
     };
@@ -41,7 +44,9 @@ export class EventService {
           { typeRelation: TypeRelation.Eq, fields: ['event_id', 'group_id', 'type'] },
           { typeRelation: TypeRelation.Ilike, fields: ['title', 'description', 'creation_date', 'event_date'] },
           { relation: 'creator_user', typeRelation: TypeRelation.Eq, fields: ['user_id'] },
-          { relation: 'creator_user', typeRelation: TypeRelation.Ilike, fields: ['firstname', 'lastname'] }
+          { relation: 'creator_user', typeRelation: TypeRelation.Ilike, fields: ['firstname', 'lastname'] },
+          { relation: 'group', typeRelation: TypeRelation.Eq, fields: ['group_id'] },
+          { relation: 'group', typeRelation: TypeRelation.Ilike, fields: ['title', 'description'] }
         ]
       };
       const filter: Filter<Event> = new Filter<Event>(eventFilter, eventFilterOption);
@@ -56,6 +61,7 @@ export class EventService {
   }
 
   async create(createEventDTO: CreateEventDTO): Promise<Event> {
+    console.log(createEventDTO);
     const event = await this.eventRepository.save(createEventDTO);
     return await this.eventRepository.findOneBy({ event_id: event.event_id });
   }

@@ -13,12 +13,20 @@ import { CreateEventDTO, UpdateEventDTO } from './event.dto';
 import { Event } from './event.entity';
 import { EventFilter } from './event.filter';
 import { EventService } from './event.service';
+import { Group } from '../group/group.entity';
+import { GroupService } from '../group/group.service';
+import { UserService } from '../user/user.service';
+import { User } from '../user/user.entity';
 
 @Controller('event')
 @ApiTags('Event')
 @UseFilters(ObjectNotFoundException)
 export class EventController {
-  constructor(private readonly eventService: EventService) {}
+  constructor(
+    private readonly eventService: EventService,
+    private readonly groupService: GroupService,
+    private readonly userService: UserService
+  ) {}
 
   @ApiFilterQuery('filter', EventFilter)
   @ApiFilterQuery('page', Pagination)
@@ -43,6 +51,12 @@ export class EventController {
   @ApiResponse({ status: 400, type: BadRequestExceptionValidation, description: 'Bad Request - Validation failed' })
   @Post()
   async create(@Body() createEventDTO: CreateEventDTO): Promise<ObjectResponseCreate<Event>> {
+    let group: Group = await this.groupService.findOne(createEventDTO.group_id);
+    if (group === null) throw new ObjectNotFoundException('Group not found with id : ' + createEventDTO.group_id, 404);
+    createEventDTO.group = group;
+    let user: User = await this.userService.findOne(createEventDTO.creator_user_id);
+    if (user === null) throw new ObjectNotFoundException('User not found with id : ' + createEventDTO.creator_user_id, 404);
+    createEventDTO.creator_user = user;
     return new ObjectResponseCreate(await this.eventService.create(createEventDTO), 'The event has been created successfully');
   }
 

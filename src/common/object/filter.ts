@@ -47,7 +47,6 @@ export class Filter<k> {
         }
       })
       .pop();
-    console.log(entityTypeFilter);
 
     switch (entityTypeFilter.typeRelation) {
       case TypeRelation.Eq:
