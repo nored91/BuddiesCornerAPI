@@ -70,4 +70,21 @@ export class GroupController {
     await this.groupService.delete({ group_id: groupId });
     return new ObjectResponseUpdate(groupId, 'The group has been deleted successfully');
   }
+
+  // @ApiFilterQuery('filter', GroupFilter)
+  // @ApiFilterQuery('page', Pagination)
+  // @ApiResponse({ status: 200, type: ObjectResponseRecord<Group>, description: 'A list of group' })
+  // @Get('/:id/user')
+  // async findAllUser(@Query('filter') groupFilter: GroupFilter): Promise<ObjectResponseRecord<Group>> {
+  //   return new ObjectResponseRecord<Group>(await this.groupService.findAllUser(groupFilter));
+  // }
+
+  @ApiFilterQuery('filter', GroupFilter)
+  @ApiFilterQuery('page', Pagination)
+  @ApiResponse({ status: 200, type: ObjectResponseRecord<Group>, description: 'A list of group' })
+  @Get('/:id/user')
+  async findAllUser(@Param('id', ParseUUIDPipe) group_id: string, @Query('filter') groupFilter: GroupFilter) {
+    let result = this.groupService.findAllUser(group_id);
+    return result;
+  }
 }

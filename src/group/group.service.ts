@@ -5,6 +5,7 @@ import { DeleteResult, FindManyOptions, FindOptionsWhere, Repository } from 'typ
 import { CreateGroupDTO, UpdateGroupDTO } from './group.dto';
 import { Group } from './group.entity';
 import { GroupFilter } from './group.filter';
+import { User } from '../user/user.entity';
 
 @Injectable()
 export class GroupService {
@@ -38,5 +39,17 @@ export class GroupService {
 
   async delete(options: FindOptionsWhere<Group>): Promise<DeleteResult> {
     return await this.groupRepository.delete(options);
+  }
+
+  async findAllUser(group_id: string, groupFilter?: GroupFilter) {
+    const options: FindManyOptions = {
+      loadRelationIds: true,
+      where: {
+        group_id: group_id,
+        users: { lastname: 'legras' }
+      }
+      //where: groupFilter.renderFilterOptionWhere(['group_id'], ['title', 'description'])
+    };
+    return await this.groupRepository.find(options);
   }
 }

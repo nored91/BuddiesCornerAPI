@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinColumn, JoinTable } from 'typeorm';
+import { Group } from '../group/group.entity';
 
 @Entity()
 export class User {
@@ -45,4 +46,18 @@ export class User {
   })
   @Column()
   creation_date: Date;
+
+  @ManyToMany(() => Group, (group) => group.users)
+  @JoinTable({
+    name: 'group_user',
+    joinColumn: {
+      name: 'user_id',
+      referencedColumnName: 'user_id'
+    },
+    inverseJoinColumn: {
+      name: 'group_id',
+      referencedColumnName: 'group_id'
+    }
+  })
+  groups: Group[];
 }
