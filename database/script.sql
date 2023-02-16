@@ -31,8 +31,8 @@ CREATE TABLE "user" (
 
 CREATE TABLE "event" ( 
   event_id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-  group_id uuid,
-  creator_user_id uuid,
+  group_id uuid NOT NULL,
+  creator_user_id uuid NOT NULL,
   title varchar(100) NOT NULL, 
   description varchar(255),
   creation_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP(0),

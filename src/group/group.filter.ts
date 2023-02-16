@@ -1,10 +1,10 @@
 /* eslint-disable prettier/prettier */
 import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional, IsString, IsUUID, Length } from 'class-validator';
-import { Filter } from '../common/object/filter';
+import { GenericFilter } from '../common/object/filter';
 import { Group } from './group.entity';
 
-export class GroupFilter extends Filter<Group> {
+export class GroupFilter extends GenericFilter<Group> {
   @ApiProperty({
     name: 'group_id',
     description: 'Filter by group id',
