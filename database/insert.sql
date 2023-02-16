@@ -73,6 +73,28 @@ INSERT INTO event_user (event_id,user_id) VALUES (
   (select user_id from "user" where "user".mail = 'legraskevin@outlook.com')
 );
 
+INSERT INTO event (group_id,creator_user_id,title,description,event_date,location,type) VALUES (
+  (select group_id from "group" where "group".title = 'On va au bloc'),
+  (select user_id from "user" where "user".mail = 'legraskevin@outlook.com'),
+  'Séance du mercredi',
+  'La seance des bonhommes du mercredi',
+  '2023/02/18:12:00:00'::timestamp,
+  'Le labo (Grenoble gare)',
+  'sport'
+);
+INSERT INTO event_user (event_id,user_id) VALUES (
+  (select event_id from "event" where event.title = 'Séance du mercredi'),
+  (select user_id from "user" where "user".mail = 'thoretton.norman@gmail.com')
+);
+INSERT INTO event_user (event_id,user_id) VALUES (
+  (select event_id from "event" where event.title = 'Séance du mercredi'),
+  (select user_id from "user" where "user".mail = 'activated@test.fr')
+);
+INSERT INTO event_user (event_id,user_id) VALUES (
+  (select event_id from "event" where event.title = 'Séance du mercredi'),
+  (select user_id from "user" where "user".mail = 'legraskevin@outlook.com')
+);
+
 INSERT INTO task (event_id, user_id, title) VALUES (
   (select event_id from "event" where event.title = 'Séance du vendredi 18 février'),
   (select user_id from "user" where "user".mail = 'legraskevin@outlook.com'),
