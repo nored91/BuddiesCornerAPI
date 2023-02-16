@@ -14,53 +14,58 @@ export interface EntityTypeFilter {
 export interface EntityFilter {
   entityTypeFilter: EntityTypeFilter[];
 }
-export class Filter<k> {
-  private optionsWhere: FindOptionsWhere<k> = {};
-  private entityFilter: EntityFilter;
+export class GenericFilter<k> {}
 
-  renderFilterOptionWhere(entityFilter: EntityFilter) {
+export class Filter<k> {
+  bodyFilter: GenericFilter<k>;
+  constructor(bodyFilter: GenericFilter<k>, entityFilter: EntityFilter) {
     this.entityFilter = entityFilter;
-    Object.keys(this).forEach((propertyName: string) => {
-      let relation = null;
-      if (typeof this[propertyName] === 'object') {
-        relation = propertyName;
-        Object.keys(this[propertyName]).forEach((propertyNameRelation: string) => {
-          this.optionsWhere = this.constructOptionWhere(propertyNameRelation, relation);
+    this.bodyFilter = bodyFilter;
+    this.optionsWhere = {};
+  }
+  optionsWhere: FindOptionsWhere<k>;
+  entityFilter: EntityFilter;
+
+  renderFilterOptionWhere() {
+    Object.keys(this.bodyFilter).forEach((propertyName: string) => {
+      if (typeof this.bodyFilter[propertyName] === 'object') {
+        Object.keys(this.bodyFilter[propertyName]).forEach((propertyNameRelation: string) => {
+          this.constructOptionWhere(propertyNameRelation, propertyName);
         });
       } else {
-        this.optionsWhere = this.constructOptionWhere(propertyName);
+        this.constructOptionWhere(propertyName);
       }
     });
 
     return this.optionsWhere;
   }
-  constructOptionWhere(propertyName: string, relation?: string): FindOptionsWhere<k> {
+  constructOptionWhere(propertyName: string, relation?: string) {
     const entityTypeFilter: EntityTypeFilter = this.entityFilter.entityTypeFilter
       .filter((entityTypeFilter: EntityTypeFilter) => {
-        if (entityTypeFilter.fields.includes(propertyName) && entityTypeFilter.relation === relation) {
+        if (entityTypeFilter.fields.includes(propertyName) && (!entityTypeFilter.relation || entityTypeFilter.relation === relation)) {
           return true;
         }
       })
       .pop();
+    console.log(entityTypeFilter);
 
     switch (entityTypeFilter.typeRelation) {
       case TypeRelation.Eq:
         if (relation) {
           if (!this.optionsWhere[relation]) this.optionsWhere[relation] = {};
-          this.optionsWhere[relation][propertyName] = this[relation][propertyName];
+          this.optionsWhere[relation][propertyName] = this.bodyFilter[relation][propertyName];
         } else {
-          this.optionsWhere[propertyName] = this[propertyName];
+          this.optionsWhere[propertyName] = this.bodyFilter[propertyName];
         }
         break;
       case TypeRelation.Ilike:
         if (relation) {
           if (!this.optionsWhere[relation]) this.optionsWhere[relation] = {};
-          this.optionsWhere[relation][propertyName] = ILike('%' + this[relation][propertyName] + '%');
+          this.optionsWhere[relation][propertyName] = ILike('%' + this.bodyFilter[relation][propertyName] + '%');
         } else {
-          this.optionsWhere[propertyName] = ILike('%' + this[propertyName] + '%');
+          this.optionsWhere[propertyName] = ILike('%' + this.bodyFilter[propertyName] + '%');
         }
         break;
     }
-    return this.optionsWhere;
   }
 }

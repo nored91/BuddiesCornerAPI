@@ -2,12 +2,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsDate, IsEnum, IsOptional, IsString, IsUUID, Length, ValidateNested } from 'class-validator';
-import { Filter } from '../common/object/filter';
-import { User } from '../user/user.entity';
+import { GenericFilter } from '../common/object/filter';
 import { UserFilter } from '../user/user.filter';
 import { Event, EventType } from './event.entity';
 
-export class EventFilter extends Filter<Event> {
+export class EventFilter extends GenericFilter<Event> {
   @ApiProperty({
     name: 'event_id',
     description: 'Filter by event id',

@@ -5,7 +5,7 @@ import { DeleteResult, FindManyOptions, FindOptionsWhere, Repository } from 'typ
 import { CreateEventDTO, UpdateEventDTO } from './event.dto';
 import { Event } from './event.entity';
 import { EventFilter } from './event.filter';
-import { TypeRelation } from '../common/object/filter';
+import { Filter, TypeRelation } from '../common/object/filter';
 
 @Injectable()
 export class EventService {
@@ -44,8 +44,10 @@ export class EventService {
           { relation: 'creator_user', typeRelation: TypeRelation.Ilike, fields: ['firstname', 'lastname'] }
         ]
       };
-      options.where = eventFilter.renderFilterOptionWhere(eventFilterOption);
+      const filter: Filter<Event> = new Filter<Event>(eventFilter, eventFilterOption);
+      options.where = filter.renderFilterOptionWhere();
     }
+
     return await this.eventRepository.findAndCount(options);
   }
 
