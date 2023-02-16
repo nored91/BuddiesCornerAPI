@@ -37,20 +37,14 @@ export class EventService {
 
     if (Object.keys(eventFilter).length > 0) {
       const eventFilterOption = {
-        optionFilter: [
+        entityTypeFilter: [
           { typeRelation: TypeRelation.Eq, fields: ['event_id', 'group_id', 'type'] },
-          { typeRelation: TypeRelation.Ilike, fields: ['title', 'description', 'creation_date', 'event_date'] }
+          { typeRelation: TypeRelation.Ilike, fields: ['title', 'description', 'creation_date', 'event_date'] },
+          { relation: 'creator_user', typeRelation: TypeRelation.Eq, fields: ['user_id'] },
+          { relation: 'creator_user', typeRelation: TypeRelation.Ilike, fields: ['firstname', 'lastname'] }
         ]
       };
-
-      const eventUserFilterOption = {
-        relation: 'creator_user',
-        optionFilter: [
-          { typeRelation: TypeRelation.Eq, fields: ['user_id'] },
-          { typeRelation: TypeRelation.Ilike, fields: ['firstname', 'lastname'] }
-        ]
-      };
-      options.where = eventFilter.renderFilterOptionWhere([eventFilterOption, eventUserFilterOption]);
+      options.where = eventFilter.renderFilterOptionWhere(eventFilterOption);
     }
     return await this.eventRepository.findAndCount(options);
   }

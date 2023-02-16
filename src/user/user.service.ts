@@ -17,7 +17,7 @@ export class UserService {
   // eslint-disable-next-line prettier/prettier
   async findAll(pagination: Pagination, userFilter: UserFilter): Promise<[User[], number]> {
     const userFilterOption = {
-      optionFilter: [
+      entityTypeFilter: [
         { typeRelation: TypeRelation.Eq, fields: ['user_id', 'active'] },
         { typeRelation: TypeRelation.Ilike, fields: ['mail', 'firstname', 'lastname', 'pseudo'] }
       ]
@@ -26,7 +26,7 @@ export class UserService {
     const options: FindManyOptions = {
       skip: pagination.offset,
       take: pagination.limit,
-      where: userFilter.renderFilterOptionWhere([userFilterOption])
+      where: userFilter.renderFilterOptionWhere(userFilterOption)
     };
     return await this.userRepository.findAndCount(options);
   }

@@ -17,7 +17,7 @@ export class GroupService {
   // eslint-disable-next-line prettier/prettier
   async findAll(pagination: Pagination, groupFilter: GroupFilter): Promise<[Group[], number]> {
     const groupFilterOption = {
-      optionFilter: [
+      entityTypeFilter: [
         { typeRelation: TypeRelation.Eq, fields: ['group_id'] },
         { typeRelation: TypeRelation.Ilike, fields: ['title', 'description'] }
       ]
@@ -26,7 +26,7 @@ export class GroupService {
     const options: FindManyOptions = {
       skip: pagination.offset,
       take: pagination.limit,
-      where: groupFilter.renderFilterOptionWhere([groupFilterOption])
+      where: groupFilter.renderFilterOptionWhere(groupFilterOption)
     };
     return await this.groupRepository.findAndCount(options);
   }
