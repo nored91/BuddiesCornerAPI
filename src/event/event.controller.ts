@@ -39,11 +39,9 @@ export class EventController {
   @ApiResponse({ status: 200, type: Event, description: 'Requested event' })
   @ApiResponse({ status: 404, type: ObjectNotFoundException, description: 'No event found' })
   @Get('/:id')
-  async findOne(@Param('id', ParseUUIDPipe) eventId: string) {
+  async findOne(@Param('id', ParseUUIDPipe) eventId: string): Promise<Event> {
     const event: Event = await this.eventService.findOne(eventId);
-    if (event === null) {
-      throw new ObjectNotFoundException('Event not found with id : ' + eventId, 404);
-    }
+    if (event === null) throw new ObjectNotFoundException('Event not found with id : ' + eventId, 404);
     return event;
   }
 
@@ -63,12 +61,10 @@ export class EventController {
   @ApiResponse({ status: 200, type: ObjectResponseUpdate, description: 'The event has been updated successfully' })
   @ApiResponse({ status: 404, type: ObjectNotFoundException, description: 'No event found' })
   @Patch('/:id')
-  async update(@Param('id', ParseUUIDPipe) eventId: string, @Body() updateEventDTO: UpdateEventDTO) {
+  async update(@Param('id', ParseUUIDPipe) eventId: string, @Body() updateEventDTO: UpdateEventDTO): Promise<ObjectResponseUpdate> {
     updateEventDTO.event_id = eventId;
     let event: Event = await this.eventService.findOne(eventId);
-    if (event === null) {
-      throw new ObjectNotFoundException('Event not found with id : ' + eventId, 404);
-    }
+    if (event === null) throw new ObjectNotFoundException('Event not found with id : ' + eventId, 404);
     event = await this.eventService.patch(updateEventDTO);
     return new ObjectResponseUpdate(event.event_id, 'The event has been updated successfully');
   }
@@ -76,11 +72,9 @@ export class EventController {
   @ApiResponse({ status: 200, type: ObjectResponseUpdate, description: 'The event has been deleted successfully' })
   @ApiResponse({ status: 404, type: ObjectNotFoundException, description: 'No event found' })
   @Delete('/:id')
-  async delete(@Param('id', ParseUUIDPipe) eventId: string) {
+  async delete(@Param('id', ParseUUIDPipe) eventId: string): Promise<ObjectResponseUpdate> {
     const event: Event = await this.eventService.findOne(eventId);
-    if (event === null) {
-      throw new ObjectNotFoundException('Event not found with id : ' + eventId, 404);
-    }
+    if (event === null) throw new ObjectNotFoundException('Event not found with id : ' + eventId, 404);
     await this.eventService.delete({ event_id: eventId });
     return new ObjectResponseUpdate(eventId, 'The event has been deleted successfully');
   }
