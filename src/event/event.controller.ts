@@ -41,7 +41,9 @@ export class EventController {
   @Get('/:id')
   async findOne(@Param('id', ParseUUIDPipe) eventId: string): Promise<Event> {
     const event: Event = await this.eventService.findOne(eventId);
-    if (event === null) throw new ObjectNotFoundException('Event not found with id : ' + eventId, 404);
+    if (event === null) {
+      throw new ObjectNotFoundException('Event not found with id : ' + eventId, 404);
+    }
     return event;
   }
 
@@ -50,10 +52,14 @@ export class EventController {
   @Post()
   async create(@Body() createEventDTO: CreateEventDTO): Promise<ObjectResponseCreate<Event>> {
     let group: Group = await this.groupService.findOne(createEventDTO.group_id);
-    if (group === null) throw new ObjectNotFoundException('Group not found with id : ' + createEventDTO.group_id, 404);
+    if (group === null) {
+      throw new ObjectNotFoundException('Group not found with id : ' + createEventDTO.group_id, 404);
+    }
     createEventDTO.group = group;
     let user: User = await this.userService.findOne(createEventDTO.creator_user_id);
-    if (user === null) throw new ObjectNotFoundException('User not found with id : ' + createEventDTO.creator_user_id, 404);
+    if (user === null) {
+      throw new ObjectNotFoundException('User not found with id : ' + createEventDTO.creator_user_id, 404);
+    }
     createEventDTO.creator_user = user;
     return new ObjectResponseCreate(await this.eventService.create(createEventDTO), 'The event has been created successfully');
   }
@@ -64,7 +70,9 @@ export class EventController {
   async update(@Param('id', ParseUUIDPipe) eventId: string, @Body() updateEventDTO: UpdateEventDTO): Promise<ObjectResponseUpdate> {
     updateEventDTO.event_id = eventId;
     let event: Event = await this.eventService.findOne(eventId);
-    if (event === null) throw new ObjectNotFoundException('Event not found with id : ' + eventId, 404);
+    if (event === null) {
+      throw new ObjectNotFoundException('Event not found with id : ' + eventId, 404);
+    }
     event = await this.eventService.patch(updateEventDTO);
     return new ObjectResponseUpdate(event.event_id, 'The event has been updated successfully');
   }
@@ -74,7 +82,9 @@ export class EventController {
   @Delete('/:id')
   async delete(@Param('id', ParseUUIDPipe) eventId: string): Promise<ObjectResponseUpdate> {
     const event: Event = await this.eventService.findOne(eventId);
-    if (event === null) throw new ObjectNotFoundException('Event not found with id : ' + eventId, 404);
+    if (event === null) {
+      throw new ObjectNotFoundException('Event not found with id : ' + eventId, 404);
+    }
     await this.eventService.delete({ event_id: eventId });
     return new ObjectResponseUpdate(eventId, 'The event has been deleted successfully');
   }
