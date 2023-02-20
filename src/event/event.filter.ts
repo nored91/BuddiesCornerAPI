@@ -42,7 +42,7 @@ export class EventFilter extends GenericFilter<Event> {
   @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => GroupFilter)
-  public group: Group;
+  public group: GroupFilter;
 
   @ApiProperty({ description: 'Filter by title', type: String, example: 'Soirée au labo', required: false })
   @IsString()
