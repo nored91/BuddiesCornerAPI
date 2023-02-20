@@ -4,10 +4,10 @@ import { Group } from '../group/group.entity';
 import { User } from '../user/user.entity';
 
 export enum EventType {
-  sport,
-  party,
-  other,
-  vacation
+  sport = 'sport',
+  party = 'party',
+  other = 'other',
+  vacation = 'vacation'
 }
 
 @Entity()

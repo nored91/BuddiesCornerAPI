@@ -73,7 +73,7 @@ describe('eventService', () => {
   describe('findOne', () => {
     it('findOne should return one Event', async () => {
       const fakeId = event.event_id;
-      jest.spyOn(eventRepository, 'findOneBy').mockImplementationOnce(async () => event);
+      jest.spyOn(eventRepository, 'findOne').mockImplementationOnce(async () => event);
 
       expect(await eventService.findOne(fakeId)).toBe(event);
     });
@@ -95,7 +95,7 @@ describe('eventService', () => {
       jest.spyOn(userRepository, 'findOne').mockImplementation(async () => user);
       jest.spyOn(groupRepository, 'findOne').mockImplementation(async () => group);
       jest.spyOn(eventRepository, 'save').mockImplementationOnce(async () => event);
-      jest.spyOn(eventRepository, 'findOneBy').mockImplementationOnce(async () => event);
+      jest.spyOn(eventRepository, 'findOne').mockImplementationOnce(async () => event);
 
       expect(await eventService.create(dto)).toEqual(event);
     });

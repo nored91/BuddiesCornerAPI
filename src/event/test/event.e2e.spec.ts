@@ -3,54 +3,61 @@ import { Test } from '@nestjs/testing';
 import { AppModule } from '../../app.module';
 import * as request from 'supertest';
 import { BadRequestExceptionValidation } from '../../common/exception/badRequestExceptionValidation';
-import { Event } from '../event.entity';
+import { Event, EventType } from '../event.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { LIMIT } from '../../common/object/pagination.object';
 import { BadRequestExceptionFilter } from '../../common/exception/badRequestExceptionFilter';
 import { QueryFailedErrorException } from '../../common/exception/queryFailledErrorException';
 import { CreateEventDTO, UpdateEventDTO } from '../event.dto';
+import { Group } from '../../group/group.entity';
+import { Repository } from 'typeorm/repository/Repository';
+import { User } from '../../user/user.entity';
 
 describe('Event', () => {
-  /*let app: INestApplication;
+  let app: INestApplication;
+  let groupRepository: Repository<Group>;
+  let eventRepository: Repository<Event>;
+  let userRepository: Repository<User>;
+  let groupForEvent: Group = null;
+  let userForEvent: User = null;
+
+  let groupPartialForEvent: Partial<Group> = {
+    title: 'fake group for fake event',
+    description: 'fake description for test event'
+  };
+
+  let userPartialForEvent: Partial<User> = {
+    mail: 'fakeEventUser@gmail.com',
+    firstname: 'fakeUserForEvent',
+    lastname: 'fake',
+    pseudo: 'fakeForTestEndToEnd',
+    password: 'fake',
+    active: true
+  };
+
   let eventlist: Partial<Event>[] = [
     {
-      mail: 'fake@gmail.com',
-      firstname: 'fake',
-      lastname: 'fake',
-      pseudo: 'fakeForTestEndToEnd',
-      password: 'fake',
-      active: true
+      title: 'Initiation escalade',
+      description: 'fake event',
+      location: 'Paris',
+      type: EventType.sport,
+      event_date: new Date('2023-05-16')
     },
     {
-      mail: 'fake1@gmail.com',
-      firstname: 'fake',
-      lastname: 'fake',
-      pseudo: 'fakeForTestEndToEnd',
-      password: 'fake'
+      title: 'Vacances en croatie',
+      description: 'fake event',
+      location: 'grenoble',
+      type: EventType.other,
+      event_date: new Date('2024-03-16')
     },
     {
-      mail: 'fake2@gmail.com',
-      firstname: 'fake',
-      lastname: 'fake',
-      pseudo: 'fakeForTestEndToEnd',
-      password: 'fake'
-    },
-    {
-      mail: 'fake3@gmail.com',
-      firstname: 'fake',
-      lastname: 'fake',
-      pseudo: 'fakeForTestEndToEnd',
-      password: 'fake'
-    },
-    {
-      mail: 'fake4@gmail.com',
-      firstname: 'fake',
-      lastname: 'fake',
-      pseudo: 'fakeForTestEndToEnd',
-      password: 'fake'
+      title: 'Soirée après la grimpe',
+      description: 'fake event',
+      location: 'Le labo !!!',
+      type: EventType.party,
+      event_date: new Date('2023-03-16')
     }
   ];
-  let eventRepository;
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -72,8 +79,16 @@ describe('Event', () => {
     app.useGlobalFilters(new BadRequestExceptionFilter(), new QueryFailedErrorException());
     await app.init();
 
+    groupRepository = await moduleRef.get(getRepositoryToken(Group));
+    userRepository = await moduleRef.get(getRepositoryToken(User));
     eventRepository = await moduleRef.get(getRepositoryToken(Event));
+
+    userForEvent = await userRepository.save(userPartialForEvent);
+    groupForEvent = await groupRepository.save(groupPartialForEvent);
+
     for (let event of eventlist) {
+      event.group = groupForEvent;
+      event.creator_user = userForEvent;
       await eventRepository.save(event);
     }
   });
@@ -101,7 +116,7 @@ describe('Event', () => {
     });
 
     it('GetAll Event with offset set manually', async () => {
-      const offset = 4;
+      const offset = 2;
       const response = await request(app.getHttpServer()).get('/event?page[offset]=' + offset);
       expect(response.statusCode).toEqual(200);
       const responseJson = response.body;
@@ -111,8 +126,8 @@ describe('Event', () => {
     });
 
     it('GetAll Event with limit & offset set manually', async () => {
-      const offset = 5;
-      const limit = 5;
+      const offset = 2;
+      const limit = 4;
       const response = await request(app.getHttpServer()).get('/event?page[offset]=' + offset + '&page[limit]=' + limit);
       expect(response.statusCode).toEqual(200);
       const responseJson = response.body;
@@ -123,60 +138,68 @@ describe('Event', () => {
     });
 
     it('GetAll Event with filter and default limit', async () => {
-      const response = await request(app.getHttpServer()).get('/event?filter[pseudo]=fakeForTestEndToEnd');
+      const response = await request(app.getHttpServer()).get('/event?filter[description]=fake event');
       expect(response.statusCode).toEqual(200);
       const responseJson = response.body;
       expect(responseJson.count).toBeDefined();
       expect(responseJson.records).toBeDefined();
       expect(responseJson.records.length).toBeLessThanOrEqual(LIMIT);
       for (let record of responseJson.records) {
-        expect(record.mail).toMatch('fake');
+        expect(record.description).toMatch('fake event');
       }
     });
 
-    it('GetAll Event with filter active=false', async () => {
-      const response = await request(app.getHttpServer()).get('/event?filter[pseudo]=fakeForTestEndToEnd&filter[active]=false');
+    it('GetAll Event with filter on creator_user firstname', async () => {
+      const response = await request(app.getHttpServer()).get(
+        '/event?filter[description]=fake event&filter[creator_user][firstname]=fakeUserForEvent'
+      );
+      expect(response.statusCode).toEqual(200);
+      const responseJson = response.body;
+      expect(responseJson.count).toBeDefined();
+      expect(responseJson.records).toBeDefined();
+      expect(responseJson.records.length).toBe(3);
+      for (let record of responseJson.records) {
+        expect(record.creator_user.firstname).toBe('fakeUserForEvent');
+        expect(record.creator_user.user_id).toMatch(userForEvent.user_id);
+      }
+    });
+
+    it('GetAll Event with filter on group title', async () => {
+      const response = await request(app.getHttpServer()).get('/event?filter[group][title]=fake group for fake event');
+      expect(response.statusCode).toEqual(200);
+      const responseJson = response.body;
+      expect(responseJson.count).toBeDefined();
+      expect(responseJson.records).toBeDefined();
+      expect(responseJson.records.length).toBe(3);
+      for (let record of responseJson.records) {
+        expect(record.group.title).toBe('fake group for fake event');
+        expect(record.group.group_id).toMatch(groupForEvent.group_id);
+      }
+    });
+
+    it('GetAll Event with filter on event type', async () => {
+      const response = await request(app.getHttpServer()).get(
+        '/event?filter[creator_user][firstname]=fakeUserForEvent&filter[type]=' + EventType.party
+      );
       expect(response.statusCode).toEqual(200);
       const responseJson = response.body;
       expect(responseJson.count).toBeDefined();
       expect(responseJson.records).toBeDefined();
       for (let record of responseJson.records) {
-        expect(record.active).toBe(false);
+        expect(record.type).toBe(EventType.party);
+        expect(record.creator_user.user_id).toMatch(userForEvent.user_id);
       }
     });
 
-    it('GetAll Event with filter active=true', async () => {
-      const response = await request(app.getHttpServer()).get('/event?filter[pseudo]=fakeForTestEndToEnd&filter[active]=true');
-      expect(response.statusCode).toEqual(200);
-      const responseJson = response.body;
-      expect(responseJson.count).toBeDefined();
-      expect(responseJson.records).toBeDefined();
-      for (let record of responseJson.records) {
-        expect(record.active).toBe(true);
-      }
-    });
-
-    it('GetAll Event with filter', async () => {
-      const response = await request(app.getHttpServer()).get('/event?filter[active]=true&filter[mail]=gmail.com');
-      expect(response.statusCode).toEqual(200);
-      const responseJson = response.body;
-      expect(responseJson.count).toBeDefined();
-      expect(responseJson.records).toBeDefined();
-      for (let record of responseJson.records) {
-        expect(record.active).toBe(true);
-        expect(record.mail).toMatch('gmail.com');
-      }
-    });
-
-    it('GetAll Event with wrong boolean filter', async () => {
-      const response = await request(app.getHttpServer()).get('/event?filter[active]=test');
+    it('GetAll Event with wrong type', async () => {
+      const response = await request(app.getHttpServer()).get('/event?filter[creator_user][firstname]=fakeUserForEvent&filter[type]=t');
       expect(response.statusCode).toEqual(400);
       const responseJson = response.body;
       expect(responseJson.message).toBe('Bad Request - Validation failed');
       expect(responseJson.data).toBeDefined();
       expect(responseJson.data.length).toBeGreaterThan(0);
-      expect(responseJson.data[0].fieldName).toBe('active');
-      expect(responseJson.data[0].propertyErrors[0]).toBe('active must be a boolean value');
+      expect(responseJson.data[0].fieldName).toBe('type');
+      expect(responseJson.data[0].propertyErrors[0]).toBe('type must be a valid enum value');
     });
 
     it('GetAll Event with wrong uuid filter', async () => {
@@ -220,47 +243,64 @@ describe('Event', () => {
   });
 
   describe('Create event', () => {
-    const dto: CreateEventDTO = {
-      mail: 'fake5@gmail.com',
-      firstname: 'fake',
-      lastname: 'fake',
-      pseudo: 'fake',
-      password: 'fake'
-    };
-
     it('create valid event', async () => {
+      const dto: CreateEventDTO = {
+        group_id: groupForEvent.group_id,
+        creator_user_id: userForEvent.user_id,
+        title: 'fake event party',
+        description: 'fake event',
+        location: 'grenoble',
+        type: EventType.party,
+        event_date: '2023-03-16'
+      };
       const response = await request(app.getHttpServer()).post('/event').send(dto);
       expect(response.statusCode).toEqual(201);
       const responseJson = response.body;
       eventlist.push(responseJson.record);
 
+      console.log(responseJson.record);
+      console.log(responseJson.record.title);
+      console.log(responseJson.record.creator_user);
+
       expect(responseJson.message).toBe('The event has been created successfully');
       expect(responseJson.record).toBeDefined;
-      expect(responseJson.record.mail).toBe(dto.mail);
-      expect(responseJson.record.firstname).toBe(dto.firstname);
-      expect(responseJson.record.lastname).toBe(dto.lastname);
-      expect(responseJson.record.password).toBe(dto.password);
-      expect(responseJson.record.pseudo).toBe(dto.pseudo);
+      expect(responseJson.record.title).toBe(dto.title);
+      expect(responseJson.record.creator_user).toBeDefined();
+      expect(responseJson.record.creator_user.firstname).toBe(userForEvent.firstname);
+      expect(responseJson.record.creator_user.lastname).toBe(userForEvent.lastname);
+      expect(responseJson.record.group).toBeDefined();
+      expect(responseJson.record.group.title).toBe(groupForEvent.title);
       expect(responseJson.record.event_id).not.toBeNull();
       expect(responseJson.record.creation_date).not.toBeNull();
-      expect(responseJson.record.active).toBe(false);
+      expect(responseJson.record.type).toBe(EventType.party);
     });
 
-    it('create event with already used email', async () => {
+    it('create event with not found group', async () => {
+      const dto: CreateEventDTO = {
+        group_id: groupForEvent.group_id,
+        creator_user_id: userForEvent.user_id,
+        title: 'fake event party',
+        description: 'fake event',
+        location: 'grenoble',
+        type: EventType.party,
+        event_date: '2023-03-16'
+      };
+
+      dto.group_id = '312a9f8f-5317-4dde-ba2d-a91fd98f3e08';
       const response = await request(app.getHttpServer()).post('/event').send(dto);
-      expect(response.statusCode).toEqual(500);
+      expect(response.statusCode).toEqual(404);
       const responseJson = response.body;
-      expect(responseJson.message).toBe('duplicate key value violates unique constraint "event_mail_key"');
+      expect(responseJson.message).toBe('Group not found with id : ' + dto.group_id);
       expect(responseJson.path).toBe('/event');
     });
   });
 
   describe('Update event', () => {
     const dto: Partial<UpdateEventDTO> = {
-      lastname: 'fakeUpdate'
+      location: 'Labo - Grenoble'
     };
 
-    it('Update pseudo for existing event', async () => {
+    it('Update location for existing event', async () => {
       const event = eventlist[0];
       const response = await request(app.getHttpServer())
         .patch('/event/' + event.event_id)
@@ -273,7 +313,7 @@ describe('Event', () => {
       const responseGet = await request(app.getHttpServer()).get('/event/' + event.event_id);
       expect(responseGet.statusCode).toEqual(200);
       const responseGetJson = responseGet.body;
-      expect(responseGetJson.lastname).toBe(dto.lastname);
+      expect(responseGetJson.location).toBe(dto.location);
     });
 
     it('Try to update non-existing event', async () => {
@@ -285,20 +325,6 @@ describe('Event', () => {
       const responseJson = response.body;
       expect(responseJson.message).toBe('Event not found with id : ' + fakeId);
       expect(responseJson.path).toBe('/event/' + fakeId);
-    });
-
-    it('Try to update event with existing email', async () => {
-      const event = eventlist[0];
-      const dto: Partial<UpdateEventDTO> = {
-        mail: eventlist[1].mail
-      };
-      const response = await request(app.getHttpServer())
-        .patch('/event/' + event.event_id)
-        .send(dto);
-      expect(response.statusCode).toEqual(500);
-      const responseJson = response.body;
-      expect(responseJson.message).toBe('duplicate key value violates unique constraint "event_mail_key"');
-      expect(responseJson.path).toBe('/event/' + event.event_id);
     });
   });
 
@@ -325,7 +351,9 @@ describe('Event', () => {
     for (let event of eventlist) {
       await eventRepository.delete(event.event_id);
     }
+
+    await userRepository.delete(userForEvent.user_id);
+    await groupRepository.delete(groupForEvent.group_id);
     await app.close();
   });
-  */
 });

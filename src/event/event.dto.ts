@@ -32,8 +32,8 @@ export class CreateEventDTO {
   @IsEnum(EventType)
   public type: EventType;
 
-  public group: Group;
-  public creator_user: User;
+  public group?: Group;
+  public creator_user?: User;
 }
 
 export class UpdateEventDTO {
