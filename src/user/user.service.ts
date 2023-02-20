@@ -6,6 +6,7 @@ import { CreateUserDTO, UpdateUserDTO } from './user.dto';
 import { User } from './user.entity';
 import { UserFilter } from './user.filter';
 import { Filter, TypeRelation } from '../common/object/filter';
+import { Group } from '../group/group.entity';
 
 @Injectable()
 export class UserService {
@@ -14,7 +15,6 @@ export class UserService {
     private userRepository: Repository<User>
   ) {}
 
-  // eslint-disable-next-line prettier/prettier
   async findAll(pagination: Pagination, userFilter: UserFilter): Promise<[User[], number]> {
     const options: FindManyOptions = {
       skip: pagination.offset,
@@ -35,8 +35,8 @@ export class UserService {
     return await this.userRepository.findAndCount(options);
   }
 
-  async findOne(id: string): Promise<User> {
-    return await this.userRepository.findOneBy({ user_id: id });
+  async findOne(userId: string): Promise<User> {
+    return await this.userRepository.findOneBy({ user_id: userId });
   }
 
   async create(createUserDTO: CreateUserDTO): Promise<User> {
@@ -50,5 +50,14 @@ export class UserService {
 
   async delete(options: FindOptionsWhere<User>): Promise<DeleteResult> {
     return await this.userRepository.delete(options);
+  }
+
+  async findAllGroup(userId: string): Promise<Group[]> {
+    return await this.userRepository
+      .createQueryBuilder('user')
+      .select(['group.group_id', 'group.title', 'group.description'])
+      .leftJoin('user.groups', 'group')
+      .where('user.user_id = :userId', { userId: userId })
+      .getRawMany();
   }
 }

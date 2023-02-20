@@ -6,6 +6,7 @@ import { CreateGroupDTO, UpdateGroupDTO } from './group.dto';
 import { Group } from './group.entity';
 import { GroupFilter } from './group.filter';
 import { Filter, TypeRelation } from '../common/object/filter';
+import { User } from '../user/user.entity';
 
 @Injectable()
 export class GroupService {
@@ -14,7 +15,6 @@ export class GroupService {
     private groupRepository: Repository<Group>
   ) {}
 
-  // eslint-disable-next-line prettier/prettier
   async findAll(pagination: Pagination, groupFilter: GroupFilter): Promise<[Group[], number]> {
     const options: FindManyOptions = {
       skip: pagination.offset,
@@ -35,8 +35,8 @@ export class GroupService {
     return await this.groupRepository.findAndCount(options);
   }
 
-  async findOne(group_id: string): Promise<Group> {
-    return await this.groupRepository.findOneBy({ group_id: group_id });
+  async findOne(groupId: string): Promise<Group> {
+    return await this.groupRepository.findOneBy({ group_id: groupId });
   }
 
   async create(createGroupDTO: CreateGroupDTO): Promise<Group> {
@@ -52,15 +52,12 @@ export class GroupService {
     return await this.groupRepository.delete(options);
   }
 
-  async findAllUser(group_id: string, groupFilter?: GroupFilter) {
-    const options: FindManyOptions = {
-      loadRelationIds: true,
-      where: {
-        group_id: group_id,
-        users: { lastname: 'legras' }
-      }
-      //where: groupFilter.renderFilterOptionWhere(['group_id'], ['title', 'description'])
-    };
-    return await this.groupRepository.find(options);
+  async findAllUser(groupId: string): Promise<User[]> {
+    return this.groupRepository
+      .createQueryBuilder('group')
+      .select(['user.user_id', 'user.firstname', 'user.lastname', 'user.mail', 'user.pseudo'])
+      .leftJoin('group.users', 'user')
+      .where('group.group_id = :groupId', { groupId: groupId })
+      .getRawMany();
   }
 }

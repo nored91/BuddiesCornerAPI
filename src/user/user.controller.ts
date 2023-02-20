@@ -13,6 +13,7 @@ import { CreateUserDTO, UpdateUserDTO } from './user.dto';
 import { User } from './user.entity';
 import { UserFilter } from './user.filter';
 import { UserService } from './user.service';
+import { Group } from '../group/group.entity';
 
 @Controller('user')
 @ApiTags('User')
@@ -31,7 +32,7 @@ export class UserController {
   @ApiResponse({ status: 200, type: User, description: 'Requested user' })
   @ApiResponse({ status: 404, type: ObjectNotFoundException, description: 'No user found' })
   @Get('/:id')
-  async findOne(@Param('id', ParseUUIDPipe) userId: string) {
+  async findOne(@Param('id', ParseUUIDPipe) userId: string): Promise<User> {
     const user: User = await this.userService.findOne(userId);
     if (user === null) {
       throw new ObjectNotFoundException('User not found with id : ' + userId, 404);
@@ -49,7 +50,7 @@ export class UserController {
   @ApiResponse({ status: 200, type: ObjectResponseUpdate, description: 'The user has been updated successfully' })
   @ApiResponse({ status: 404, type: ObjectNotFoundException, description: 'No user found' })
   @Patch('/:id')
-  async update(@Param('id', ParseUUIDPipe) userId: string, @Body() updateUserDTO: UpdateUserDTO) {
+  async update(@Param('id', ParseUUIDPipe) userId: string, @Body() updateUserDTO: UpdateUserDTO): Promise<ObjectResponseUpdate> {
     updateUserDTO.user_id = userId;
     let user: User = await this.userService.findOne(userId);
     if (user === null) {
@@ -62,12 +63,25 @@ export class UserController {
   @ApiResponse({ status: 200, type: ObjectResponseUpdate, description: 'The user has been deleted successfully' })
   @ApiResponse({ status: 404, type: ObjectNotFoundException, description: 'No user found' })
   @Delete('/:id')
-  async delete(@Param('id', ParseUUIDPipe) userId: string) {
+  async delete(@Param('id', ParseUUIDPipe) userId: string): Promise<ObjectResponseUpdate> {
     const user: User = await this.userService.findOne(userId);
     if (user === null) {
       throw new ObjectNotFoundException('User not found with id : ' + userId, 404);
     }
     await this.userService.delete({ user_id: userId });
     return new ObjectResponseUpdate(userId, 'The user has been deleted successfully');
+  }
+
+  @ApiFilterQuery('filter', UserFilter)
+  @ApiFilterQuery('page', Pagination)
+  @ApiResponse({ status: 200, type: Array<Group>, description: 'A list of group' })
+  @ApiResponse({ status: 404, type: ObjectNotFoundException, description: 'No user found' })
+  @Get('/:id/group')
+  async findAllGroup(@Param('id', ParseUUIDPipe) userId: string): Promise<Group[]> {
+    let user: User = await this.userService.findOne(userId);
+    if (user === null) {
+      throw new ObjectNotFoundException('User not found with id : ' + userId, 404);
+    }
+    return await this.userService.findAllGroup(user.user_id);
   }
 }

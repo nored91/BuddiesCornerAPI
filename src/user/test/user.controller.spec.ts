@@ -30,7 +30,8 @@ describe('UserController', () => {
     pseudo: 'fake',
     password: '',
     active: true,
-    creation_date: new Date('2023-01-16 15:11:06.000')
+    creation_date: new Date('2023-01-16 15:11:06.000'),
+    groups: []
   };
 
   beforeEach(async () => {
@@ -80,10 +81,7 @@ describe('UserController', () => {
 
   describe('create', () => {
     it('create should return created user', async () => {
-      const result: ObjectResponseCreate<User> = new ObjectResponseCreate<User>(
-        user,
-        'The user has been created successfully'
-      );
+      const result: ObjectResponseCreate<User> = new ObjectResponseCreate<User>(user, 'The user has been created successfully');
 
       const dto: CreateUserDTO = {
         mail: 'fake@gmail.com',
@@ -100,10 +98,7 @@ describe('UserController', () => {
 
   describe('update', () => {
     it('update should return an user_id and a successful message', async () => {
-      const result: ObjectResponseUpdate = new ObjectResponseUpdate(
-        user.user_id,
-        'The user has been updated successfully'
-      );
+      const result: ObjectResponseUpdate = new ObjectResponseUpdate(user.user_id, 'The user has been updated successfully');
       const dto: UpdateUserDTO = {
         mail: 'fake@gmail.com',
         firstname: 'fake',
@@ -142,10 +137,7 @@ describe('UserController', () => {
 
   describe('delete', () => {
     it('delete should return the user_id and a successful message of deletion', async () => {
-      const result: ObjectResponseUpdate = new ObjectResponseUpdate(
-        user.user_id,
-        'The user has been deleted successfully'
-      );
+      const result: ObjectResponseUpdate = new ObjectResponseUpdate(user.user_id, 'The user has been deleted successfully');
       jest.spyOn(userService, 'findOne').mockImplementation(async () => user);
       jest.spyOn(userService, 'delete').mockImplementation(async () => null);
 
