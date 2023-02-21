@@ -199,7 +199,7 @@ describe('Event', () => {
       expect(responseJson.data).toBeDefined();
       expect(responseJson.data.length).toBeGreaterThan(0);
       expect(responseJson.data[0].fieldName).toBe('type');
-      expect(responseJson.data[0].propertyErrors[0]).toBe('type must be a valid enum value');
+      expect(responseJson.data[0].propertyErrors[0]).toBe('type must be one of the following values: sport, party, other, vacation');
     });
 
     it('GetAll Event with bad request exception because user_id is incorrect', async () => {
