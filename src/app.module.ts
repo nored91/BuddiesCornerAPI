@@ -18,7 +18,7 @@ import { Group } from './group/group.entity';
       database: 'buddiescorner',
       entities: [User, Group, Event],
       synchronize: false,
-      logging: ['error', 'info', 'log', 'query'] //"query","schema","error","warn","info","log","migration"
+      logging: ['error', 'info', 'log'] //"query","schema","error","warn","info","log","migration"
     }),
     UserModule,
     EventModule,
