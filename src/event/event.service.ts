@@ -45,7 +45,7 @@ export class EventService {
           { typeRelation: TypeRelation.Eq, fields: ['event_id', 'group_id', 'type'] },
           { typeRelation: TypeRelation.Ilike, fields: ['title', 'description', 'creation_date', 'event_date'] },
           { relation: 'creator_user', typeRelation: TypeRelation.Eq, fields: ['user_id'] },
-          { relation: 'creator_user', typeRelation: TypeRelation.Ilike, fields: ['firstname', 'lastname'] },
+          { relation: 'creator_user', typeRelation: TypeRelation.Ilike, fields: ['mail', 'firstname', 'lastname'] },
           { relation: 'group', typeRelation: TypeRelation.Eq, fields: ['group_id'] },
           { relation: 'group', typeRelation: TypeRelation.Ilike, fields: ['title', 'description'] }
         ]

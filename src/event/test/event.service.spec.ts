@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { AppModule } from '../../app.module';
-import { DeleteResult, Repository } from 'typeorm';
+import { DeleteResult, FindManyOptions, Repository } from 'typeorm';
 import { Pagination } from '../../common/object/pagination.object';
 import { Event, EventType } from '../event.entity';
 import { EventFilter } from '../event.filter';
@@ -11,6 +11,7 @@ import { Group } from '../../group/group.entity';
 import { GroupService } from '../../group/group.service';
 import { User } from '../../user/user.entity';
 import { UserService } from '../../user/user.service';
+import { Filter } from '../../common/object/filter';
 
 describe('eventService', () => {
   let eventRepository: Repository<Event>;
@@ -67,6 +68,19 @@ describe('eventService', () => {
       const result = await eventService.findAll(pagination, queryFilter);
 
       expect(result).toEqual(TypeOrmResult);
+    });
+
+    it('findAll with no typeRelation in filter (eq,ilike) should return eq by default', async () => {
+      let options: FindManyOptions = {};
+      const queryFilter: EventFilter = new EventFilter();
+      queryFilter.event_id = '1';
+      const eventFilterOption = {
+        entityTypeFilter: [{ typeRelation: null, fields: ['event_id', 'group_id', 'type'] }]
+      };
+      const filter: Filter<Event> = new Filter<Event>(queryFilter, eventFilterOption);
+      options.where = filter.renderFilterOptionWhere();
+
+      expect(options.where).toMatchObject({ event_id: '1' });
     });
   });
 

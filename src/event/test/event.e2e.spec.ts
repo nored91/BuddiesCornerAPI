@@ -202,6 +202,28 @@ describe('Event', () => {
       expect(responseJson.data[0].propertyErrors[0]).toBe('type must be a valid enum value');
     });
 
+    it('GetAll Event with bad request exception because user_id is incorrect', async () => {
+      const response = await request(app.getHttpServer()).get('/event?filter[creator_user][user_id]=1234567');
+      expect(response.statusCode).toEqual(400);
+      const responseJson = response.body;
+      expect(responseJson.message).toBe('Bad Request - Validation failed');
+      expect(responseJson.data).toBeDefined();
+      expect(responseJson.data.length).toBeGreaterThan(0);
+      expect(responseJson.data[0].fieldName).toBe('user_id');
+      expect(responseJson.data[0].propertyErrors[0]).toBe('user_id must be a UUID');
+    });
+
+    it('GetAll Event with bad request exception because user pseudo is not part of authorized filter', async () => {
+      const response = await request(app.getHttpServer()).get('/event?filter[creator_user][pseudo]=test');
+      expect(response.statusCode).toEqual(400);
+      const responseJson = response.body;
+      expect(responseJson.message).toBe('Bad Request - Validation failed');
+      expect(responseJson.data).toBeDefined();
+      expect(responseJson.data.length).toBeGreaterThan(0);
+      expect(responseJson.data[0].fieldName).toBe('pseudo');
+      expect(responseJson.data[0].propertyErrors[0]).toBe("pseudo fieldName can't be used as a filter");
+    });
+
     it('GetAll Event with wrong uuid filter', async () => {
       const response = await request(app.getHttpServer()).get('/event?filter[event_id]=11111');
       expect(response.statusCode).toEqual(400);
@@ -258,10 +280,6 @@ describe('Event', () => {
       const responseJson = response.body;
       eventlist.push(responseJson.record);
 
-      console.log(responseJson.record);
-      console.log(responseJson.record.title);
-      console.log(responseJson.record.creator_user);
-
       expect(responseJson.message).toBe('The event has been created successfully');
       expect(responseJson.record).toBeDefined;
       expect(responseJson.record.title).toBe(dto.title);
@@ -291,6 +309,25 @@ describe('Event', () => {
       expect(response.statusCode).toEqual(404);
       const responseJson = response.body;
       expect(responseJson.message).toBe('Group not found with id : ' + dto.group_id);
+      expect(responseJson.path).toBe('/event');
+    });
+
+    it('create event with not found user', async () => {
+      const dto: CreateEventDTO = {
+        group_id: groupForEvent.group_id,
+        creator_user_id: userForEvent.user_id,
+        title: 'fake event party',
+        description: 'fake event',
+        location: 'grenoble',
+        type: EventType.party,
+        event_date: '2023-03-16'
+      };
+
+      dto.creator_user_id = '312a9f8f-5317-4dde-ba2d-a91fd98f3e08';
+      const response = await request(app.getHttpServer()).post('/event').send(dto);
+      expect(response.statusCode).toEqual(404);
+      const responseJson = response.body;
+      expect(responseJson.message).toBe('User not found with id : ' + dto.creator_user_id);
       expect(responseJson.path).toBe('/event');
     });
   });

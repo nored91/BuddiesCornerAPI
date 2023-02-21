@@ -1,4 +1,6 @@
+import { ValidationError } from 'class-validator';
 import { FindOperator, FindOptionsWhere, ILike } from 'typeorm';
+import { BadRequestExceptionValidation } from '../exception/badRequestExceptionValidation';
 
 export enum TypeRelation {
   Ilike,
@@ -49,7 +51,11 @@ export class Filter<k> {
         }
       })
       .pop();
-
+    if (!entityTypeFilter) {
+      throw new BadRequestExceptionValidation([
+        { property: propertyName, constraints: { propertyName: propertyName + " fieldName can't be used as a filter" } }
+      ]);
+    }
     if (relation) {
       if (!this.optionsWhere[relation]) this.optionsWhere[relation] = {};
       this.optionsWhere[relation][propertyName] = this.formatFilterValue(
