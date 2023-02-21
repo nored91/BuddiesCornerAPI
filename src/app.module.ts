@@ -6,6 +6,8 @@ import { Event } from './event/event.entity';
 import { EventModule } from './event/event.module';
 import { GroupModule } from './group/group.module';
 import { Group } from './group/group.entity';
+import { GroupUserModule } from './groupUser/groupUser.module';
+import { GroupUser } from './groupUser/groupUser.entity';
 
 @Module({
   imports: [
@@ -16,13 +18,14 @@ import { Group } from './group/group.entity';
       username: 'postgres',
       password: 'postgres',
       database: 'buddiescorner',
-      entities: [User, Group, Event],
+      entities: [User, Group, Event, GroupUser],
       synchronize: false,
       logging: ['error', 'info', 'log'] //"query","schema","error","warn","info","log","migration"
     }),
     UserModule,
     EventModule,
-    GroupModule
+    GroupModule,
+    GroupUserModule
   ],
   controllers: [],
   providers: []
