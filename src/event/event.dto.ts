@@ -19,14 +19,14 @@ export class CreateEventDTO {
 
   @IsString()
   @Length(1, 250)
-  public description: string;
+  public description?: string;
 
   @IsString()
   @Length(1, 255)
   public location: string;
 
   @IsDateString()
-  public event_date: string;
+  public event_date?: string;
 
   @IsDefined()
   @IsEnum(EventType)
@@ -42,23 +42,23 @@ export class UpdateEventDTO {
   @IsOptional()
   @IsString()
   @Length(1, 100)
-  public title: string;
+  public title?: string;
 
   @IsOptional()
   @IsString()
   @Length(1, 250)
-  public description: string;
+  public description?: string;
 
   @IsOptional()
   @IsString()
   @Length(1, 255)
-  public location: string;
+  public location?: string;
 
   @IsOptional()
   @IsDateString()
-  public event_date: string;
+  public event_date?: string;
 
   @IsOptional()
   @IsEnum(EventType)
-  public type: EventType;
+  public type?: EventType;
 }

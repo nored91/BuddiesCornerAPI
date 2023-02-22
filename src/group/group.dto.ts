@@ -9,7 +9,7 @@ export class CreateGroupDTO {
   @IsOptional()
   @IsString()
   @Length(1, 255)
-  public description: string;
+  public description?: string;
 }
 
 export class UpdateGroupDTO {
@@ -18,10 +18,10 @@ export class UpdateGroupDTO {
   @IsOptional()
   @IsString()
   @Length(1, 100)
-  public title: string;
+  public title?: string;
 
   @IsOptional()
   @IsString()
   @Length(1, 255)
-  public description: string;
+  public description?: string;
 }
