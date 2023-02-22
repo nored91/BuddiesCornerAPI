@@ -13,12 +13,20 @@ import { CreateEventDTO, UpdateEventDTO } from './event.dto';
 import { Event } from './event.entity';
 import { EventFilter } from './event.filter';
 import { EventService } from './event.service';
+import { Group } from '../group/group.entity';
+import { GroupService } from '../group/group.service';
+import { UserService } from '../user/user.service';
+import { User } from '../user/user.entity';
 
 @Controller('event')
 @ApiTags('Event')
 @UseFilters(ObjectNotFoundException)
 export class EventController {
-  constructor(private readonly eventService: EventService) {}
+  constructor(
+    private readonly eventService: EventService,
+    private readonly groupService: GroupService,
+    private readonly userService: UserService
+  ) {}
 
   @ApiFilterQuery('filter', EventFilter)
   @ApiFilterQuery('page', Pagination)
@@ -31,7 +39,7 @@ export class EventController {
   @ApiResponse({ status: 200, type: Event, description: 'Requested event' })
   @ApiResponse({ status: 404, type: ObjectNotFoundException, description: 'No event found' })
   @Get('/:id')
-  async findOne(@Param('id', ParseUUIDPipe) eventId: string) {
+  async findOne(@Param('id', ParseUUIDPipe) eventId: string): Promise<Event> {
     const event: Event = await this.eventService.findOne(eventId);
     if (event === null) {
       throw new ObjectNotFoundException('Event not found with id : ' + eventId, 404);
@@ -43,13 +51,23 @@ export class EventController {
   @ApiResponse({ status: 400, type: BadRequestExceptionValidation, description: 'Bad Request - Validation failed' })
   @Post()
   async create(@Body() createEventDTO: CreateEventDTO): Promise<ObjectResponseCreate<Event>> {
+    let group: Group = await this.groupService.findOne(createEventDTO.group_id);
+    if (group === null) {
+      throw new ObjectNotFoundException('Group not found with id : ' + createEventDTO.group_id, 404);
+    }
+    createEventDTO.group = group;
+    let user: User = await this.userService.findOne(createEventDTO.creator_user_id);
+    if (user === null) {
+      throw new ObjectNotFoundException('User not found with id : ' + createEventDTO.creator_user_id, 404);
+    }
+    createEventDTO.creator_user = user;
     return new ObjectResponseCreate(await this.eventService.create(createEventDTO), 'The event has been created successfully');
   }
 
   @ApiResponse({ status: 200, type: ObjectResponseUpdate, description: 'The event has been updated successfully' })
   @ApiResponse({ status: 404, type: ObjectNotFoundException, description: 'No event found' })
   @Patch('/:id')
-  async update(@Param('id', ParseUUIDPipe) eventId: string, @Body() updateEventDTO: UpdateEventDTO) {
+  async update(@Param('id', ParseUUIDPipe) eventId: string, @Body() updateEventDTO: UpdateEventDTO): Promise<ObjectResponseUpdate> {
     updateEventDTO.event_id = eventId;
     let event: Event = await this.eventService.findOne(eventId);
     if (event === null) {
@@ -62,7 +80,7 @@ export class EventController {
   @ApiResponse({ status: 200, type: ObjectResponseUpdate, description: 'The event has been deleted successfully' })
   @ApiResponse({ status: 404, type: ObjectNotFoundException, description: 'No event found' })
   @Delete('/:id')
-  async delete(@Param('id', ParseUUIDPipe) eventId: string) {
+  async delete(@Param('id', ParseUUIDPipe) eventId: string): Promise<ObjectResponseUpdate> {
     const event: Event = await this.eventService.findOne(eventId);
     if (event === null) {
       throw new ObjectNotFoundException('Event not found with id : ' + eventId, 404);

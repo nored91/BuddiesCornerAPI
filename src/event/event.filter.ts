@@ -3,6 +3,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsDate, IsEnum, IsOptional, IsString, IsUUID, Length, ValidateNested } from 'class-validator';
 import { GenericFilter } from '../common/object/filter';
+import { Group } from '../group/group.entity';
+import { GroupFilter } from '../group/group.filter';
 import { UserFilter } from '../user/user.filter';
 import { Event, EventType } from './event.entity';
 
@@ -31,15 +33,16 @@ export class EventFilter extends GenericFilter<Event> {
   public creator_user: UserFilter;
 
   @ApiProperty({
-    name: 'group_id',
-    description: 'Filter by group',
-    type: String,
-    example: '312a9f8f-5317-4dde-ba2d-a91fd98f3e09',
+    name: 'group',
+    description: 'Filter on group (fields : group_id, title & description)',
+    type: GroupFilter,
+    example: '',
     required: false
   })
-  @IsUUID()
   @IsOptional()
-  public group_id: string;
+  @ValidateNested({ each: true })
+  @Type(() => GroupFilter)
+  public group: GroupFilter;
 
   @ApiProperty({ description: 'Filter by title', type: String, example: 'Soirée au labo', required: false })
   @IsString()
