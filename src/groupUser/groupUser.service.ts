@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, Repository } from 'typeorm';
-import { Filter, TypeRelation } from '../common/object/filter';
-import { Pagination } from '../common/object/pagination.object';
+import { Group } from '../group/group.entity';
+import { User } from '../user/user.entity';
 import { GroupUser } from './groupUser.entity';
-import { GroupUserFilter } from './groupUser.filter';
 
 @Injectable()
 export class GroupUserService {
@@ -13,23 +12,23 @@ export class GroupUserService {
     private groupUserRepository: Repository<GroupUser>
   ) {}
 
-  async findAll(pagination: Pagination, groupUserFilter: GroupUserFilter): Promise<[GroupUser[], number]> {
+  async findAllUser(groupId: string) {
     const options: FindManyOptions = {
-      skip: pagination.offset,
-      take: pagination.limit
+      select: ['user_id', 'administrator', 'users.mail', 'users.firstname', 'users.lastname', 'users.pseudo'],
+      relationLoadStrategy: 'query',
+      relations: ['users'],
+      where: { group_id: groupId }
     };
+    return this.groupUserRepository.findAndCount(options);
+  }
 
-    if (Object.keys(groupUserFilter).length > 0) {
-      const groupFilterOption = {
-        entityTypeFilter: [
-          { typeRelation: TypeRelation.Eq, fields: ['group_id'] },
-          { typeRelation: TypeRelation.Ilike, fields: ['title', 'description'] }
-        ]
-      };
-      const filter: Filter<GroupUser> = new Filter<GroupUser>(groupUserFilter, groupFilterOption);
-      options.where = filter.renderFilterOptionWhere();
-    }
-
-    return await this.groupUserRepository.findAndCount(options);
+  async findAllGroup(userId: string) {
+    const options: FindManyOptions = {
+      //select: ['group_id', 'groups.title', 'groups.description'],
+      relationLoadStrategy: 'query',
+      relations: ['groups'],
+      where: { user_id: userId }
+    };
+    return this.groupUserRepository.findAndCount(options);
   }
 }

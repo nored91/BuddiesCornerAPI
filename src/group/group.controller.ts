@@ -71,17 +71,4 @@ export class GroupController {
     await this.groupService.delete({ group_id: groupId });
     return new ObjectResponseUpdate(groupId, 'The group has been deleted successfully');
   }
-
-  @ApiFilterQuery('filter', GroupFilter)
-  @ApiFilterQuery('page', Pagination)
-  @ApiResponse({ status: 200, type: Array<User>, description: 'A list of User' })
-  @ApiResponse({ status: 404, type: ObjectNotFoundException, description: 'No group found' })
-  @Get('/:id/user')
-  async findAllUser(@Param('id', ParseUUIDPipe) groupId: string): Promise<User[]> {
-    let group: Group = await this.groupService.findOne(groupId);
-    if (group === null) {
-      throw new ObjectNotFoundException('Group not found with id : ' + groupId, 404);
-    }
-    return await this.groupService.findAllUser(group.group_id);
-  }
 }

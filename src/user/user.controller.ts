@@ -71,17 +71,4 @@ export class UserController {
     await this.userService.delete({ user_id: userId });
     return new ObjectResponseUpdate(userId, 'The user has been deleted successfully');
   }
-
-  @ApiFilterQuery('filter', UserFilter)
-  @ApiFilterQuery('page', Pagination)
-  @ApiResponse({ status: 200, type: Array<Group>, description: 'A list of group' })
-  @ApiResponse({ status: 404, type: ObjectNotFoundException, description: 'No user found' })
-  @Get('/:id/group')
-  async findAllGroup(@Param('id', ParseUUIDPipe) userId: string): Promise<Group[]> {
-    let user: User = await this.userService.findOne(userId);
-    if (user === null) {
-      throw new ObjectNotFoundException('User not found with id : ' + userId, 404);
-    }
-    return await this.userService.findAllGroup(user.user_id);
-  }
 }

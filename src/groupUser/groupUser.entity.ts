@@ -19,7 +19,7 @@ export class GroupUser {
   })
   @ManyToOne(() => Group)
   @JoinColumn({ name: 'group_id', referencedColumnName: 'group_id' })
-  group: Group;
+  groups: Group;
 
   @ApiProperty({
     type: 'uuid',
@@ -29,7 +29,7 @@ export class GroupUser {
   })
   @ManyToOne(() => User)
   @JoinColumn({ name: 'user_id', referencedColumnName: 'user_id' })
-  user: User;
+  users: User;
 
   @ApiProperty({ type: Boolean, description: 'user is adminstrator of group', example: true, default: false, required: false })
   @Column()
