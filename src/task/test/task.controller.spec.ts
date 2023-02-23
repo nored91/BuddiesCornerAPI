@@ -120,9 +120,7 @@ describe('TaskController', () => {
       const dto: CreateTaskDTO = {
         event_id: event.event_id,
         user_id: user.user_id,
-        title: 'Apporter les salades',
-        event: event,
-        user: user
+        title: 'Apporter les salades'
       };
       jest.spyOn(userService, 'findOne').mockImplementation(async () => user);
       jest.spyOn(eventService, 'findOne').mockImplementation(async () => event);

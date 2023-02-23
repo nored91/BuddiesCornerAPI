@@ -55,12 +55,10 @@ export class EventController {
     if (group === null) {
       throw new ObjectNotFoundException('Group not found with id : ' + createEventDTO.group_id, 404);
     }
-    createEventDTO.group = group;
     let user: User = await this.userService.findOne(createEventDTO.creator_user_id);
     if (user === null) {
       throw new ObjectNotFoundException('User not found with id : ' + createEventDTO.creator_user_id, 404);
     }
-    createEventDTO.creator_user = user;
     return new ObjectResponseCreate(await this.eventService.create(createEventDTO), 'The event has been created successfully');
   }
 

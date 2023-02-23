@@ -1,6 +1,4 @@
 import { IsDateString, IsDefined, IsEnum, IsOptional, IsString, IsUUID, Length } from 'class-validator';
-import { Group } from '../group/group.entity';
-import { User } from '../user/user.entity';
 import { EventType } from './event.entity';
 
 export class CreateEventDTO {
@@ -31,9 +29,6 @@ export class CreateEventDTO {
   @IsDefined()
   @IsEnum(EventType)
   public type: EventType;
-
-  public group?: Group;
-  public creator_user?: User;
 }
 
 export class UpdateEventDTO {

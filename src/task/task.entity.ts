@@ -1,5 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, JoinTable } from 'typeorm';
 import { User } from '../user/user.entity';
 import { Event } from '../event/event.entity';
 
@@ -14,24 +14,31 @@ export class Task {
   @PrimaryGeneratedColumn('uuid')
   task_id: string;
 
+  @ApiHideProperty()
+  @Column()
+  event_id?: string;
+
   @ApiProperty({
-    type: 'Event',
+    type: Event,
     description: 'event',
-    example: '',
     required: true
   })
   @ManyToOne(() => Event)
   @JoinColumn({ name: 'event_id', referencedColumnName: 'event_id' })
   event: Event;
 
+  @ApiHideProperty()
+  @Column()
+  user_id?: string;
+
   @ApiProperty({
-    type: 'User',
+    type: User,
     description: 'creator',
-    example: '',
     required: true
   })
   @ManyToOne(() => User)
   @JoinColumn({ name: 'user_id', referencedColumnName: 'user_id' })
+  @JoinTable()
   user: User;
 
   @ApiProperty({ type: String, description: 'title', example: "Apporter l'apéro", required: true })

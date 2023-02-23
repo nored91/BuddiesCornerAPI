@@ -123,9 +123,7 @@ describe('EventController', () => {
         description: 'fake event',
         location: 'grenoble',
         type: EventType.sport,
-        event_date: '2023-03-16',
-        group: group,
-        creator_user: user
+        event_date: '2023-03-16'
       };
       jest.spyOn(userService, 'findOne').mockImplementation(async () => user);
       jest.spyOn(groupService, 'findOne').mockImplementation(async () => group);

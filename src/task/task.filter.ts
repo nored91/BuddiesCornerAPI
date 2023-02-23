@@ -24,7 +24,6 @@ export class TaskFilter extends GenericFilter<Task> {
     name: 'user',
     description: 'Filter on creator user (fields : user_id, firstname & lastname)',
     type: UserFilter,
-    example: '',
     required: false
   })
   @IsOptional()
@@ -36,7 +35,6 @@ export class TaskFilter extends GenericFilter<Task> {
     name: 'event',
     description: 'Filter on group (fields : event_id, title & description)',
     type: EventFilter,
-    example: '',
     required: false
   })
   @IsOptional()

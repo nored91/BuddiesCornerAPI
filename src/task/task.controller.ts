@@ -55,12 +55,10 @@ export class TaskController {
     if (event === null) {
       throw new ObjectNotFoundException('Event not found with id : ' + createTaskDTO.event_id, 404);
     }
-    createTaskDTO.event = event;
     let user: User = await this.userService.findOne(createTaskDTO.user_id);
     if (user === null) {
       throw new ObjectNotFoundException('User not found with id : ' + createTaskDTO.user_id, 404);
     }
-    createTaskDTO.user = user;
     return new ObjectResponseCreate(await this.taskService.create(createTaskDTO), 'The task has been created successfully');
   }
 

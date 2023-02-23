@@ -10,7 +10,6 @@ import { CreateTaskDTO, UpdateTaskDTO } from '../task.dto';
 import { Event, EventType } from '../../event/event.entity';
 import { User } from '../../user/user.entity';
 import { Filter } from '../../common/object/filter';
-import { Group } from '../../group/group.entity';
 
 describe('taskService', () => {
   let taskRepository: Repository<Task>;
@@ -97,9 +96,7 @@ describe('taskService', () => {
       const dto: CreateTaskDTO = {
         event_id: event.event_id,
         user_id: user.user_id,
-        title: 'Apporter les salades',
-        event: event,
-        user: user
+        title: 'Apporter les salades'
       };
       jest.spyOn(userRepository, 'findOne').mockImplementation(async () => user);
       jest.spyOn(eventRepository, 'findOne').mockImplementation(async () => event);
