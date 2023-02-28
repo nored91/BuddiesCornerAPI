@@ -61,7 +61,7 @@ export class TaskController {
     if (user === null) {
       throw new ObjectNotFoundException('User not found with id : ' + createTaskDTO.user_id, 404);
     }
-    return new ObjectResponseCreate(await this.taskService.create(createTaskDTO), 'The task has been created successfully');
+    return new ObjectResponseCreate<Task>(await this.taskService.create(createTaskDTO), 'The task has been created successfully');
   }
 
   @ApiResponse({ status: 200, type: ObjectResponseUpdate, description: 'The task has been updated successfully' })

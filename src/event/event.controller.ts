@@ -61,7 +61,7 @@ export class EventController {
     if (user === null) {
       throw new ObjectNotFoundException('User not found with id : ' + createEventDTO.creator_user_id, 404);
     }
-    return new ObjectResponseCreate(await this.eventService.create(createEventDTO), 'The event has been created successfully');
+    return new ObjectResponseCreate<Event>(await this.eventService.create(createEventDTO), 'The event has been created successfully');
   }
 
   @ApiResponse({ status: 200, type: ObjectResponseUpdate, description: 'The event has been updated successfully' })
