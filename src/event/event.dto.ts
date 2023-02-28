@@ -25,6 +25,7 @@ export class CreateEventDTO {
   @Length(0, 255)
   public location?: string;
 
+  @IsOptional()
   @IsDateString()
   public event_date?: string;
 
