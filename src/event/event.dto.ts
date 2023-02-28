@@ -44,12 +44,12 @@ export class UpdateEventDTO {
 
   @IsOptional()
   @IsString()
-  @Length(1, 250)
+  @Length(0, 250)
   public description?: string;
 
   @IsOptional()
   @IsString()
-  @Length(1, 255)
+  @Length(0, 255)
   public location?: string;
 
   @IsOptional()
