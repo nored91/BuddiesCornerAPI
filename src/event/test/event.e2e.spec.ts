@@ -138,7 +138,7 @@ describe('Event', () => {
     });
 
     it('GetAll Event with filter and default limit', async () => {
-      const response = await request(app.getHttpServer()).get('/event?filter[description]=fake event');
+      const response = await request(app.getHttpServer()).get('/event?filter[description]=fake event !');
       expect(response.statusCode).toEqual(200);
       const responseJson = response.body;
       expect(responseJson.count).toBeDefined();
@@ -170,8 +170,9 @@ describe('Event', () => {
       expect(responseJson.count).toBeDefined();
       expect(responseJson.records).toBeDefined();
       for (let record of responseJson.records) {
-        expect(record.group.title).toBe('fake group for fake event');
-        expect(record.group.group_id).toMatch(groupForEvent.group_id);
+        let group = record.group;
+        expect(group.title).toBe('fake group for fake event');
+        expect(group.group_id).toBe(groupForEvent.group_id);
       }
     });
 

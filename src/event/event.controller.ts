@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Delete, Param, ParseUUIDPipe, Patch } from '@nestjs/common';
+import { BadRequestException, Delete, Param, ParseUUIDPipe, Patch } from '@nestjs/common';
 import { Body, Controller, Get, Post, Query, UseFilters } from '@nestjs/common/decorators';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ObjectResponseRecord } from '../common/response/objectResponseRecord';
@@ -37,6 +37,7 @@ export class EventController {
   }
 
   @ApiResponse({ status: 200, type: Event, description: 'Requested event' })
+  @ApiResponse({ status: 400, type: BadRequestException, description: 'Validation failed (uuid is expected)' })
   @ApiResponse({ status: 404, type: ObjectNotFoundException, description: 'No event found' })
   @Get('/:id')
   async findOne(@Param('id', ParseUUIDPipe) eventId: string): Promise<Event> {
@@ -49,6 +50,7 @@ export class EventController {
 
   @ApiResponse({ status: 201, type: ObjectResponseCreate<Event>, description: 'The event has been created successfully' })
   @ApiResponse({ status: 400, type: BadRequestExceptionValidation, description: 'Bad Request - Validation failed' })
+  @ApiResponse({ status: 404, type: ObjectNotFoundException, description: 'Group/User not found' })
   @Post()
   async create(@Body() createEventDTO: CreateEventDTO): Promise<ObjectResponseCreate<Event>> {
     let group: Group = await this.groupService.findOne(createEventDTO.group_id);
@@ -63,6 +65,7 @@ export class EventController {
   }
 
   @ApiResponse({ status: 200, type: ObjectResponseUpdate, description: 'The event has been updated successfully' })
+  @ApiResponse({ status: 400, type: BadRequestException, description: 'Validation failed (uuid is expected)' })
   @ApiResponse({ status: 404, type: ObjectNotFoundException, description: 'No event found' })
   @Patch('/:id')
   async update(@Param('id', ParseUUIDPipe) eventId: string, @Body() updateEventDTO: UpdateEventDTO): Promise<ObjectResponseUpdate> {
@@ -76,6 +79,7 @@ export class EventController {
   }
 
   @ApiResponse({ status: 200, type: ObjectResponseUpdate, description: 'The event has been deleted successfully' })
+  @ApiResponse({ status: 400, type: BadRequestException, description: 'Validation failed (uuid is expected)' })
   @ApiResponse({ status: 404, type: ObjectNotFoundException, description: 'No event found' })
   @Delete('/:id')
   async delete(@Param('id', ParseUUIDPipe) eventId: string): Promise<ObjectResponseUpdate> {

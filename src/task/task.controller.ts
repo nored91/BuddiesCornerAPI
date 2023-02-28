@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Delete, Param, ParseUUIDPipe, Patch } from '@nestjs/common';
+import { BadRequestException, Delete, Param, ParseUUIDPipe, Patch } from '@nestjs/common';
 import { Body, Controller, Get, Post, Query, UseFilters } from '@nestjs/common/decorators';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ObjectResponseRecord } from '../common/response/objectResponseRecord';
@@ -37,6 +37,7 @@ export class TaskController {
   }
 
   @ApiResponse({ status: 200, type: Task, description: 'Requested task' })
+  @ApiResponse({ status: 400, type: BadRequestException, description: 'Validation failed (uuid is expected)' })
   @ApiResponse({ status: 404, type: ObjectNotFoundException, description: 'No task found' })
   @Get('/:id')
   async findOne(@Param('id', ParseUUIDPipe) taskId: string): Promise<Task> {
@@ -49,6 +50,7 @@ export class TaskController {
 
   @ApiResponse({ status: 201, type: ObjectResponseCreate<Task>, description: 'The task has been created successfully' })
   @ApiResponse({ status: 400, type: BadRequestExceptionValidation, description: 'Bad Request - Validation failed' })
+  @ApiResponse({ status: 404, type: ObjectNotFoundException, description: 'Event/User not found' })
   @Post()
   async create(@Body() createTaskDTO: CreateTaskDTO): Promise<ObjectResponseCreate<Task>> {
     let event: Event = await this.eventService.findOne(createTaskDTO.event_id);
@@ -63,6 +65,7 @@ export class TaskController {
   }
 
   @ApiResponse({ status: 200, type: ObjectResponseUpdate, description: 'The task has been updated successfully' })
+  @ApiResponse({ status: 400, type: BadRequestException, description: 'Validation failed (uuid is expected)' })
   @ApiResponse({ status: 404, type: ObjectNotFoundException, description: 'No task found' })
   @Patch('/:id')
   async update(@Param('id', ParseUUIDPipe) taskId: string, @Body() updateTaskDTO: UpdateTaskDTO): Promise<ObjectResponseUpdate> {
@@ -76,6 +79,7 @@ export class TaskController {
   }
 
   @ApiResponse({ status: 200, type: ObjectResponseUpdate, description: 'The task has been deleted successfully' })
+  @ApiResponse({ status: 400, type: BadRequestException, description: 'Validation failed (uuid is expected)' })
   @ApiResponse({ status: 404, type: ObjectNotFoundException, description: 'No task found' })
   @Delete('/:id')
   async delete(@Param('id', ParseUUIDPipe) taskId: string): Promise<ObjectResponseUpdate> {

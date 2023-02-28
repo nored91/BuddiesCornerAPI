@@ -15,13 +15,15 @@ export class CreateEventDTO {
   @Length(1, 100)
   public title: string;
 
+  @IsOptional()
   @IsString()
-  @Length(1, 250)
+  @Length(0, 250)
   public description?: string;
 
+  @IsOptional()
   @IsString()
-  @Length(1, 255)
-  public location: string;
+  @Length(0, 255)
+  public location?: string;
 
   @IsDateString()
   public event_date?: string;

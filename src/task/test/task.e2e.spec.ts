@@ -24,7 +24,7 @@ describe('Task', () => {
   let userForTask: User = null;
   let groupForTask: Group = null;
 
-  let groupPartialForTask: Partial<Event> = {
+  let groupPartialForTask: Partial<Group> = {
     title: 'fake group for fake event'
   };
 
