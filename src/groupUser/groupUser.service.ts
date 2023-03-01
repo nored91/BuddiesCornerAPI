@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, Repository } from 'typeorm';
+import { DeleteResult, FindManyOptions, FindOneOptions, FindOptionsWhere, Repository } from 'typeorm';
 import { Group } from '../group/group.entity';
 import { User } from '../user/user.entity';
+import { CreateGroupUserDTO, UpdateGroupUserDTO } from './groupUser.dto';
 import { GroupUser } from './groupUser.entity';
 
 @Injectable()
@@ -12,23 +13,40 @@ export class GroupUserService {
     private groupUserRepository: Repository<GroupUser>
   ) {}
 
-  async findAllUser(groupId: string) {
-    const options: FindManyOptions = {
-      select: ['user_id', 'administrator', 'users.mail', 'users.firstname', 'users.lastname', 'users.pseudo'],
-      relationLoadStrategy: 'query',
-      relations: ['users'],
-      where: { group_id: groupId }
-    };
-    return this.groupUserRepository.findAndCount(options);
+  async findAllUser(groupId: string): Promise<GroupUser[]> {
+    return this.groupUserRepository
+      .createQueryBuilder('groupUser')
+      .select(['administrator', 'join_date', 'user.user_id as user_id', 'user.firstname', 'user.lastname', 'user.mail', 'user.pseudo'])
+      .leftJoin('groupUser.users', 'user')
+      .where('groupUser.group_id = :groupId', { groupId: groupId })
+      .getRawMany<GroupUser>();
   }
 
-  async findAllGroup(userId: string) {
-    const options: FindManyOptions = {
-      //select: ['group_id', 'groups.title', 'groups.description'],
-      relationLoadStrategy: 'query',
-      relations: ['groups'],
-      where: { user_id: userId }
-    };
-    return this.groupUserRepository.findAndCount(options);
+  async findAllGroup(userId: string): Promise<GroupUser[]> {
+    return this.groupUserRepository
+      .createQueryBuilder('groupUser')
+      .select(['group.group_id as group_id', 'group.title', 'group.description'])
+      .leftJoin('groupUser.groups', 'group')
+      .where('groupUser.user_id = :userId', { userId: userId })
+      .getRawMany<GroupUser>();
+  }
+
+  async findOneUserGroup(group_id: string, user_id: string): Promise<GroupUser> {
+    let option: FindOneOptions = { where: { group_id: group_id, user_id: user_id } };
+    return this.groupUserRepository.findOne(option);
+  }
+
+  async createUserGroup(createGroupUserDTO: CreateGroupUserDTO) {
+    const groupUser = await this.groupUserRepository.save(createGroupUserDTO);
+    return await this.findOneUserGroup(groupUser.group_id, groupUser.user_id);
+  }
+
+  async patchUserGroup(updateGroupUserDTO: UpdateGroupUserDTO) {
+    return await this.groupUserRepository.save(updateGroupUserDTO);
+  }
+
+  async deleteUserGroup(group_id: string, user_id: string): Promise<DeleteResult> {
+    let option: FindOptionsWhere<GroupUser> = { group_id: group_id, user_id: user_id };
+    return this.groupUserRepository.delete(option);
   }
 }
