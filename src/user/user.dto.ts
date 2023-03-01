@@ -35,29 +35,29 @@ export class UpdateUserDTO {
   @IsString()
   @Length(1, 255)
   @IsOptional()
-  public mail: string;
+  public mail?: string;
 
   @IsString()
   @Length(1, 50)
   @IsOptional()
-  public firstname: string;
+  public firstname?: string;
 
   @IsString()
   @Length(1, 50)
   @IsOptional()
-  public lastname: string;
+  public lastname?: string;
 
   @IsString()
   @Length(1, 50)
   @IsOptional()
-  public pseudo: string;
+  public pseudo?: string;
 
   @IsString()
   @Length(1, 255)
   @IsOptional()
-  public password: string;
+  public password?: string;
 
   @IsBoolean()
   @IsOptional()
-  public active: boolean;
+  public active?: boolean;
 }

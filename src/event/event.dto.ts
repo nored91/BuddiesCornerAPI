@@ -1,6 +1,4 @@
 import { IsDateString, IsDefined, IsEnum, IsOptional, IsString, IsUUID, Length } from 'class-validator';
-import { Group } from '../group/group.entity';
-import { User } from '../user/user.entity';
 import { EventType } from './event.entity';
 
 export class CreateEventDTO {
@@ -17,23 +15,23 @@ export class CreateEventDTO {
   @Length(1, 100)
   public title: string;
 
+  @IsOptional()
   @IsString()
-  @Length(1, 250)
-  public description: string;
+  @Length(0, 250)
+  public description?: string;
 
+  @IsOptional()
   @IsString()
-  @Length(1, 255)
-  public location: string;
+  @Length(0, 255)
+  public location?: string;
 
+  @IsOptional()
   @IsDateString()
-  public event_date: string;
+  public event_date?: string;
 
   @IsDefined()
   @IsEnum(EventType)
   public type: EventType;
-
-  public group?: Group;
-  public creator_user?: User;
 }
 
 export class UpdateEventDTO {
@@ -42,23 +40,23 @@ export class UpdateEventDTO {
   @IsOptional()
   @IsString()
   @Length(1, 100)
-  public title: string;
+  public title?: string;
 
   @IsOptional()
   @IsString()
-  @Length(1, 250)
-  public description: string;
+  @Length(0, 250)
+  public description?: string;
 
   @IsOptional()
   @IsString()
-  @Length(1, 255)
-  public location: string;
+  @Length(0, 255)
+  public location?: string;
 
   @IsOptional()
   @IsDateString()
-  public event_date: string;
+  public event_date?: string;
 
   @IsOptional()
   @IsEnum(EventType)
-  public type: EventType;
+  public type?: EventType;
 }

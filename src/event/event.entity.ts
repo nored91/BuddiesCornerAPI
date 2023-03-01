@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { Group } from '../group/group.entity';
 import { User } from '../user/user.entity';
@@ -22,24 +22,30 @@ export class Event {
   event_id: string;
 
   @ApiProperty({
-    type: 'Group',
+    type: Group,
     description: 'group',
-    example: '',
     required: true
   })
   @ManyToOne(() => Group)
   @JoinColumn({ name: 'group_id', referencedColumnName: 'group_id' })
   group: Group;
 
+  @ApiHideProperty()
+  @Column()
+  group_id?: string;
+
   @ApiProperty({
-    type: 'User',
+    type: User,
     description: 'creator user',
-    example: '',
     required: true
   })
   @ManyToOne(() => User)
   @JoinColumn({ name: 'creator_user_id', referencedColumnName: 'user_id' })
   creator_user: User;
+
+  @ApiHideProperty()
+  @Column()
+  creator_user_id?: string;
 
   @ApiProperty({
     type: 'enum',
