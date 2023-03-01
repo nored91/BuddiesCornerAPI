@@ -8,6 +8,8 @@ import { GroupModule } from './group/group.module';
 import { Group } from './group/group.entity';
 import { GroupUserModule } from './groupUser/groupUser.module';
 import { GroupUser } from './groupUser/groupUser.entity';
+import { Task } from './task/task.entity';
+import { TaskModule } from './task/task.module';
 
 @Module({
   imports: [
@@ -18,14 +20,15 @@ import { GroupUser } from './groupUser/groupUser.entity';
       username: 'postgres',
       password: 'postgres',
       database: 'buddiescorner',
-      entities: [User, Group, Event, GroupUser],
+      entities: [User, Group, Event, Task, GroupUser],
       synchronize: false,
       logging: ['error', 'info', 'log', 'query'] //"query","schema","error","warn","info","log","migration"
     }),
     UserModule,
     EventModule,
     GroupModule,
-    GroupUserModule
+    GroupUserModule,
+    TaskModule
   ],
   controllers: [],
   providers: []

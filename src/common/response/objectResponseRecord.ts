@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 export class ObjectResponseRecord<k> {
   @ApiProperty({ type: Number, description: 'Count of records', example: 12 })
   private count: number;
-  @ApiProperty({ type: Array<k>, description: 'Array of Records', example: [] })
+  @ApiProperty({ type: Array<k>, description: 'Array of Records' })
   private records: k[];
 
   constructor(response: [k[], number]) {

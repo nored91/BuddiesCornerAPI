@@ -1,8 +1,25 @@
 import { BadRequestException, ValidationError } from '@nestjs/common';
+import { ApiProperty } from '@nestjs/swagger';
 import { ValidationErrorMessage } from '../object/validationErrorMessage.object';
 
 export class BadRequestExceptionValidation extends BadRequestException {
   validationErrorsMessage: ValidationErrorMessage[];
+  @ApiProperty({ type: String, description: 'Message', example: 'Bad Request - Validation failed' })
+  message: string;
+  @ApiProperty({ type: Number, description: 'Status code', example: 400 })
+  statusCode: number;
+  @ApiProperty({
+    type: Array,
+    description: 'Validation error message',
+    example: [
+      {
+        fieldName: 'achieve',
+        propertyErrors: ['achieve must be a boolean value']
+      }
+    ]
+  })
+  data: ValidationErrorMessage[];
+
   constructor(ValidationErrors: ValidationError[]) {
     super('Bad Request - Validation failed');
     this.validationErrorsMessage = [];
