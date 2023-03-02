@@ -13,8 +13,8 @@ export class BadRequestExceptionValidation extends BadRequestException {
     description: 'Validation error message',
     example: [
       {
-        fieldName: 'achieve',
-        propertyErrors: ['achieve must be a boolean value']
+        fieldName: 'field',
+        propertyErrors: ['must be a correct value']
       }
     ]
   })

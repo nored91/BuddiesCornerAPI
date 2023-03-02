@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 @Catch(ObjectNotFoundException)
 export class ObjectNotFoundException extends HttpException {
-  @ApiProperty({ type: String, description: 'Message', example: 'Task not found with id : 58869b57-0b16-407c-adc7-d4a28ae66962' })
+  @ApiProperty({ type: String, description: 'Message', example: 'Object not found with id : 58869b57-0b16-407c-adc7-d4a28ae66962' })
   message: string;
   @ApiProperty({ type: Number, description: 'Status code', example: 404 })
   statusCode: number;
