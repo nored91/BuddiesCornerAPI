@@ -18,7 +18,7 @@ export class CommentService {
     'user.firstname',
     'user.lastname',
     'event.event_id',
-    'event.message',
+    'event.title',
     'event.description'
   ];
   constructor(
@@ -70,6 +70,7 @@ export class CommentService {
   }
 
   async patch(updateCommentDTO: UpdateCommentDTO): Promise<Comment> {
+    updateCommentDTO.edition_date = new Date().toISOString();
     return await this.commentRepository.save(updateCommentDTO);
   }
 

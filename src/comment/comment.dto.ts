@@ -22,4 +22,8 @@ export class UpdateCommentDTO {
   @IsString()
   @Length(1, 100)
   public message?: string;
+
+  @IsOptional()
+  @IsDateString()
+  public edition_date?: string;
 }

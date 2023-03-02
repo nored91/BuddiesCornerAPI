@@ -127,20 +127,20 @@ describe('Comment', () => {
     });
 
     it('GetAll Comment with filter and default limit', async () => {
-      const response = await request(app.getHttpServer()).get('/comment?filter[title]=Fake comment - apporter à manger');
+      const response = await request(app.getHttpServer()).get('/comment?filter[message]=Fake comment 1');
       expect(response.statusCode).toEqual(200);
       const responseJson = response.body;
       expect(responseJson.count).toBeDefined();
       expect(responseJson.records).toBeDefined();
       expect(responseJson.records.length).toBeLessThanOrEqual(LIMIT);
       for (let record of responseJson.records) {
-        expect(record.title).toBe('Fake comment - apporter à manger');
+        expect(record.message).toBe('Fake comment 1');
       }
     });
 
     it('GetAll Comment with filter on user firstname', async () => {
       const response = await request(app.getHttpServer()).get(
-        '/comment?filter[title]=fake comment&filter[user][firstname]=fakeUserForComment'
+        '/comment?filter[message]=fake comment&filter[user][firstname]=fakeUserForComment'
       );
       expect(response.statusCode).toEqual(200);
       const responseJson = response.body;
@@ -166,34 +166,11 @@ describe('Comment', () => {
       }
     });
 
-    it('GetAll Comment with filter on achieve', async () => {
-      const response = await request(app.getHttpServer()).get('/comment?filter[user][firstname]=fakeUserForComment&filter[achieve]=false');
-      expect(response.statusCode).toEqual(200);
-      const responseJson = response.body;
-      expect(responseJson.count).toBeDefined();
-      expect(responseJson.records).toBeDefined();
-      for (let record of responseJson.records) {
-        expect(record.achieve).toBe(false);
-        expect(record.user.user_id).toMatch(userForComment.user_id);
-      }
-    });
-
-    it('GetAll Comment with wrong boolean value', async () => {
-      const response = await request(app.getHttpServer()).get('/comment?filter[user][firstname]=fakeUserForComment&filter[achieve]=TRUE');
-      expect(response.statusCode).toEqual(400);
-      const responseJson = response.body;
-      expect(responseJson.comment).toBe('Bad Request - Validation failed');
-      expect(responseJson.data).toBeDefined();
-      expect(responseJson.data.length).toBeGreaterThan(0);
-      expect(responseJson.data[0].fieldName).toBe('achieve');
-      expect(responseJson.data[0].propertyErrors[0]).toBe('achieve must be a boolean value');
-    });
-
     it('GetAll Comment with bad request exception because user_id is incorrect', async () => {
       const response = await request(app.getHttpServer()).get('/comment?filter[user][user_id]=1234567');
       expect(response.statusCode).toEqual(400);
       const responseJson = response.body;
-      expect(responseJson.comment).toBe('Bad Request - Validation failed');
+      expect(responseJson.message).toBe('Bad Request - Validation failed');
       expect(responseJson.data).toBeDefined();
       expect(responseJson.data.length).toBeGreaterThan(0);
       expect(responseJson.data[0].fieldName).toBe('user_id');
@@ -204,7 +181,7 @@ describe('Comment', () => {
       const response = await request(app.getHttpServer()).get('/comment?filter[user][pseudo]=test');
       expect(response.statusCode).toEqual(400);
       const responseJson = response.body;
-      expect(responseJson.comment).toBe('Bad Request - Validation failed');
+      expect(responseJson.message).toBe('Bad Request - Validation failed');
       expect(responseJson.data).toBeDefined();
       expect(responseJson.data.length).toBeGreaterThan(0);
       expect(responseJson.data[0].fieldName).toBe('pseudo');
@@ -215,7 +192,7 @@ describe('Comment', () => {
       const response = await request(app.getHttpServer()).get('/comment?filter[comment_id]=11111');
       expect(response.statusCode).toEqual(400);
       const responseJson = response.body;
-      expect(responseJson.comment).toBe('Bad Request - Validation failed');
+      expect(responseJson.message).toBe('Bad Request - Validation failed');
       expect(responseJson.data).toBeDefined();
       expect(responseJson.data.length).toBeGreaterThan(0);
       expect(responseJson.data[0].fieldName).toBe('comment_id');
@@ -237,7 +214,7 @@ describe('Comment', () => {
       const response = await request(app.getHttpServer()).get('/comment/' + commentId);
       expect(response.statusCode).toEqual(404);
       const responseJson = response.body;
-      expect(responseJson.comment).toBe('Comment not found with id : 39048102-0e9b-46c7-9dd6-de34169e3111');
+      expect(responseJson.message).toBe('Comment not found with id : 39048102-0e9b-46c7-9dd6-de34169e3111');
       expect(responseJson.path).toBe('/comment/39048102-0e9b-46c7-9dd6-de34169e3111');
     });
 
@@ -246,7 +223,7 @@ describe('Comment', () => {
       const response = await request(app.getHttpServer()).get('/comment/' + commentId);
       expect(response.statusCode).toEqual(400);
       const responseJson = response.body;
-      expect(responseJson.comment).toBe('Validation failed (uuid is expected)');
+      expect(responseJson.message).toBe('Validation failed (uuid is expected)');
       expect(responseJson.error).toBe('Bad Request');
     });
   });
@@ -263,7 +240,7 @@ describe('Comment', () => {
       const responseJson = response.body;
       commentlist.push(responseJson.record);
 
-      expect(responseJson.comment).toBe('The comment has been created successfully');
+      expect(responseJson.message).toBe('The comment has been created successfully');
       expect(responseJson.record).toBeDefined;
       expect(responseJson.record.message).toBe(dto.message);
       expect(responseJson.record.user).toBeDefined();
@@ -286,7 +263,7 @@ describe('Comment', () => {
       const response = await request(app.getHttpServer()).post('/comment').send(dto);
       expect(response.statusCode).toEqual(404);
       const responseJson = response.body;
-      expect(responseJson.comment).toBe('Event not found with id : ' + dto.event_id);
+      expect(responseJson.message).toBe('Event not found with id : ' + dto.event_id);
       expect(responseJson.path).toBe('/comment');
     });
 
@@ -301,7 +278,7 @@ describe('Comment', () => {
       const response = await request(app.getHttpServer()).post('/comment').send(dto);
       expect(response.statusCode).toEqual(404);
       const responseJson = response.body;
-      expect(responseJson.comment).toBe('User not found with id : ' + dto.user_id);
+      expect(responseJson.message).toBe('User not found with id : ' + dto.user_id);
       expect(responseJson.path).toBe('/comment');
     });
   });
@@ -312,20 +289,21 @@ describe('Comment', () => {
       message: 'Fake edited message'
     };
 
-    it('Update location for existing comment', async () => {
+    it('Update message for existing comment', async () => {
       const comment = commentlist[0];
       const response = await request(app.getHttpServer())
         .patch('/comment/' + comment.comment_id)
         .send(dto);
       expect(response.statusCode).toEqual(200);
       const responseJson = response.body;
-      expect(responseJson.comment).toBe('The comment has been updated successfully');
+      expect(responseJson.message).toBe('The comment has been updated successfully');
       expect(responseJson.id).toBe(comment.comment_id);
 
       const responseGet = await request(app.getHttpServer()).get('/comment/' + comment.comment_id);
       expect(responseGet.statusCode).toEqual(200);
       const responseGetJson = responseGet.body;
-      expect(responseGetJson.achieve).toBe(true);
+      expect(responseGetJson.edition_date).toBeDefined();
+      expect(responseGetJson.message).toBe('Fake edited message');
     });
 
     it('Try to update non-existing comment', async () => {
@@ -335,7 +313,7 @@ describe('Comment', () => {
         .send(dto);
       expect(response.statusCode).toEqual(404);
       const responseJson = response.body;
-      expect(responseJson.comment).toBe('Comment not found with id : ' + fakeId);
+      expect(responseJson.message).toBe('Comment not found with id : ' + fakeId);
       expect(responseJson.path).toBe('/comment/' + fakeId);
     });
   });
@@ -346,7 +324,7 @@ describe('Comment', () => {
       const response = await request(app.getHttpServer()).delete('/comment/' + comment.comment_id);
       expect(response.statusCode).toEqual(200);
       const responseJson = response.body;
-      expect(responseJson.comment).toBe('The comment has been deleted successfully');
+      expect(responseJson.message).toBe('The comment has been deleted successfully');
       expect(responseJson.id).toBe(comment.comment_id);
     });
     it('valid deletion of an comment', async () => {
@@ -354,7 +332,7 @@ describe('Comment', () => {
       const response = await request(app.getHttpServer()).delete('/comment/' + fakeId);
       expect(response.statusCode).toEqual(404);
       const responseJson = response.body;
-      expect(responseJson.comment).toBe('Comment not found with id : ' + fakeId);
+      expect(responseJson.message).toBe('Comment not found with id : ' + fakeId);
       expect(responseJson.path).toBe('/comment/' + fakeId);
     });
   });
