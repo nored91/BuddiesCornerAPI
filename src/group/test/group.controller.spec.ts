@@ -26,8 +26,7 @@ describe('GroupController', () => {
     group_id: '1',
     title: 'fake title',
     description: 'fake description',
-    creation_date: new Date('2023-01-16 15:11:06.000'),
-    users: []
+    creation_date: new Date('2023-01-16 15:11:06.000')
   };
 
   beforeEach(async () => {

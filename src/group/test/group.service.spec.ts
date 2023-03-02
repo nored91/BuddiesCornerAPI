@@ -16,8 +16,7 @@ describe('groupService', () => {
     group_id: '1',
     title: 'fake title',
     description: 'fake description',
-    creation_date: new Date('2023-02-14 15:11:06.000'),
-    users: []
+    creation_date: new Date('2023-02-14 15:11:06.000')
   };
 
   beforeEach(async () => {

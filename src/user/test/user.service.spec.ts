@@ -20,8 +20,7 @@ describe('userService', () => {
     pseudo: 'fake',
     password: '',
     active: true,
-    creation_date: new Date('2023-01-16 15:11:06.000'),
-    groups: []
+    creation_date: new Date('2023-01-16 15:11:06.000')
   };
 
   beforeEach(async () => {
