@@ -17,9 +17,7 @@ export class CreateGroupUserDTO {
   @IsBoolean()
   public administrator: boolean;
 
-  public group?: Group;
   public group_id?: string;
-  public user?: User;
   public user_id?: string;
 }
 
@@ -37,5 +35,5 @@ export class UpdateGroupUserDTO {
     }
   })
   @IsBoolean()
-  public administrator: boolean;
+  public administrator?: boolean;
 }

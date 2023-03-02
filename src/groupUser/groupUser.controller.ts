@@ -38,7 +38,7 @@ export class GroupUserController {
     if (group === null) {
       throw new ObjectNotFoundException('Group not found with id : ' + groupId, 404);
     }
-    return this.groupUserService.findAllUser(groupId);
+    return await this.groupUserService.findAllUser(groupId);
   }
 
   @ApiFilterQuery('filter', GroupUserFilter)
@@ -52,12 +52,12 @@ export class GroupUserController {
     if (user === null) {
       throw new ObjectNotFoundException('User not found with id : ' + userId, 404);
     }
-    return this.groupUserService.findAllGroup(userId);
+    return await this.groupUserService.findAllGroup(userId);
   }
 
   @ApiFilterQuery('filter', GroupUserFilter)
   @ApiFilterQuery('page', Pagination)
-  @ApiResponse({ status: 200, type: ObjectResponseRecord<GroupUser>, description: 'A list of user' })
+  @ApiResponse({ status: 200, type: ObjectResponseRecord<GroupUser>, description: 'The user has been added successfully to the group' })
   @ApiResponse({ status: 400, type: BadRequestException, description: 'Validation failed (uuid is expected)' })
   @ApiResponse({ status: 404, type: ObjectNotFoundException, description: 'No user/group found' })
   @Post('/group/:group_id/user/:user_id')
@@ -70,12 +70,12 @@ export class GroupUserController {
     if (group === null) {
       throw new ObjectNotFoundException('Group not found with id : ' + groupId, 404);
     }
-    createGroupUserDTO.group = group;
+    createGroupUserDTO.group_id = group.group_id;
     const user: User = await this.userService.findOne(userId);
     if (user === null) {
       throw new ObjectNotFoundException('User not found with id : ' + userId, 404);
     }
-    createGroupUserDTO.user = user;
+    createGroupUserDTO.user_id = user.user_id;
     return new ObjectResponseCreate<GroupUser>(
       await this.groupUserService.createUserGroup(createGroupUserDTO),
       'The user has been added successfully to the group'
@@ -84,7 +84,7 @@ export class GroupUserController {
 
   @ApiFilterQuery('filter', GroupUserFilter)
   @ApiFilterQuery('page', Pagination)
-  @ApiResponse({ status: 200, type: ObjectResponseRecord<GroupUser>, description: 'A list of user' })
+  @ApiResponse({ status: 200, type: ObjectResponseRecord<GroupUser>, description: 'The user group has been updated successfully' })
   @ApiResponse({ status: 400, type: BadRequestException, description: 'Validation failed (uuid is expected)' })
   @ApiResponse({ status: 404, type: ObjectNotFoundException, description: 'No user/group found' })
   @Patch('/group/:group_id/user/:user_id')
@@ -114,7 +114,7 @@ export class GroupUserController {
 
   @ApiFilterQuery('filter', GroupUserFilter)
   @ApiFilterQuery('page', Pagination)
-  @ApiResponse({ status: 200, type: ObjectResponseRecord<GroupUser>, description: 'A list of user' })
+  @ApiResponse({ status: 200, type: ObjectResponseRecord<GroupUser>, description: 'The user group has been deleted successfully' })
   @ApiResponse({ status: 400, type: BadRequestException, description: 'Validation failed (uuid is expected)' })
   @ApiResponse({ status: 404, type: ObjectNotFoundException, description: 'No user/group found' })
   @Delete('/group/:group_id/user/:user_id')
@@ -136,6 +136,6 @@ export class GroupUserController {
     }
     await this.groupUserService.deleteUserGroup(groupId, userId);
     let userGroupId: string = '{ group_id : ' + userGroup.group_id + ', user_id : ' + userGroup.user_id + ' }';
-    return new ObjectResponseUpdate(userGroupId, 'The user group has been updated successfully');
+    return new ObjectResponseUpdate(userGroupId, 'The user group has been deleted successfully');
   }
 }
