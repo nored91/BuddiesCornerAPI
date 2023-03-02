@@ -39,7 +39,7 @@ export class CommentService {
     if (Object.keys(commentFilter).length > 0) {
       const commentFilterOption = {
         entityTypeFilter: [
-          { typeRelation: TypeRelation.Eq, fields: ['comment_id', 'event_id'] },
+          { typeRelation: TypeRelation.Eq, fields: ['comment_id'] },
           { typeRelation: TypeRelation.Ilike, fields: ['message', 'edition_date', 'creation_date'] },
           { relation: 'user', typeRelation: TypeRelation.Eq, fields: ['user_id'] },
           { relation: 'user', typeRelation: TypeRelation.Ilike, fields: ['mail', 'firstname', 'lastname'] },
