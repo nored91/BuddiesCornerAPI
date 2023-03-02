@@ -30,18 +30,4 @@ export class Group {
   })
   @Column()
   creation_date: Date;
-
-  @ManyToMany(() => User, (user) => user.groups)
-  @JoinTable({
-    name: 'group_user',
-    joinColumn: {
-      name: 'group_id',
-      referencedColumnName: 'group_id'
-    },
-    inverseJoinColumn: {
-      name: 'user_id',
-      referencedColumnName: 'user_id'
-    }
-  })
-  users: User[];
 }

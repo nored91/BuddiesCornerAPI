@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { User } from './user/user.entity';
 import { Event } from './event/event.entity';
+import { Comment } from './comment/comment.entity';
 import { EventModule } from './event/event.module';
 import { GroupModule } from './group/group.module';
 import { Group } from './group/group.entity';
@@ -10,6 +11,7 @@ import { GroupUserModule } from './groupUser/groupUser.module';
 import { GroupUser } from './groupUser/groupUser.entity';
 import { Task } from './task/task.entity';
 import { TaskModule } from './task/task.module';
+import { CommentModule } from './comment/comment.module';
 
 @Module({
   imports: [
@@ -20,7 +22,7 @@ import { TaskModule } from './task/task.module';
       username: 'postgres',
       password: 'postgres',
       database: 'buddiescorner',
-      entities: [User, Group, Event, Task, GroupUser],
+      entities: [User, Group, Event, Task, Comment, GroupUser],
       synchronize: false,
       logging: ['error', 'info', 'log', 'query'] //"query","schema","error","warn","info","log","migration"
     }),
@@ -28,7 +30,8 @@ import { TaskModule } from './task/task.module';
     EventModule,
     GroupModule,
     GroupUserModule,
-    TaskModule
+    TaskModule,
+    CommentModule
   ],
   controllers: [],
   providers: []

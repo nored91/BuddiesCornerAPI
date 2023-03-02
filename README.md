@@ -1,9 +1,12 @@
 
 ## Description
 
-BuddiesCorner API is made with [Nest] using [TypeORM]
-Respecting https://jsonapi.org convention
-Tests are handled by [Jest]
+BuddiesCorner API is made with 
+- [NestJS](https://nestjs.com/)
+- [TypeORM](https://typeorm.io/)
+- [Jest](https://jestjs.io/fr/)
+- [Swagger](https://swagger.io)
+- [jsonapi](https://jsonapi.org)
 
 ## Installation
 
