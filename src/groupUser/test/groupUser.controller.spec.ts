@@ -1,9 +1,7 @@
 import { Test } from '@nestjs/testing';
-import { Pagination } from '../../common/object/pagination.object';
 import { ObjectResponseCreate } from '../../common/response/objectResponseCreate';
 import { ObjectResponseUpdate } from '../../common/response/objectResponseUpdate';
 import { ObjectNotFoundException } from '../../common/exception/objectNotFoundException';
-import { ObjectResponseRecord } from '../../common/response/objectResponseRecord';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { GroupUserService } from '../groupUser.service';
 import { GroupUserController } from '../groupUser.controller';
@@ -127,9 +125,9 @@ describe('GroupController', () => {
       };
       jest.spyOn(groupService, 'findOne').mockImplementation(async () => group);
       jest.spyOn(userService, 'findOne').mockImplementation(async () => user);
-      jest.spyOn(groupUserService, 'createUserGroup').mockImplementation(async () => groupUser);
+      jest.spyOn(groupUserService, 'createGroupUser').mockImplementation(async () => groupUser);
 
-      expect(await groupUserController.createUserGroup(groupUser.group_id, groupUser.user_id, dto)).toEqual(result);
+      expect(await groupUserController.createGroupUser(groupUser.group_id, groupUser.user_id, dto)).toEqual(result);
     });
 
     it('create should return a not found exception', async () => {
@@ -143,7 +141,7 @@ describe('GroupController', () => {
       jest.spyOn(userService, 'findOne').mockImplementation(async () => user);
 
       try {
-        await groupUserController.createUserGroup(group.group_id, user.user_id, dto);
+        await groupUserController.createGroupUser(group.group_id, user.user_id, dto);
       } catch (e) {
         expect(e).toEqual(exception);
       }
@@ -160,7 +158,7 @@ describe('GroupController', () => {
       jest.spyOn(userService, 'findOne').mockImplementation(async () => null);
 
       try {
-        await groupUserController.createUserGroup(group.group_id, user.user_id, dto);
+        await groupUserController.createGroupUser(group.group_id, user.user_id, dto);
       } catch (e) {
         expect(e).toEqual(exception);
       }
@@ -178,10 +176,10 @@ describe('GroupController', () => {
       };
       jest.spyOn(groupService, 'findOne').mockImplementation(async () => group);
       jest.spyOn(userService, 'findOne').mockImplementation(async () => user);
-      jest.spyOn(groupUserService, 'findOneUserGroup').mockImplementation(async () => groupUser);
-      jest.spyOn(groupUserService, 'patchUserGroup').mockImplementation(async () => groupUser);
+      jest.spyOn(groupUserService, 'findOneGroupUser').mockImplementation(async () => groupUser);
+      jest.spyOn(groupUserService, 'patchGroupUser').mockImplementation(async () => groupUser);
 
-      expect(await groupUserController.UpdateUserGroup(groupUser.group_id, groupUser.user_id, dto)).toEqual(result);
+      expect(await groupUserController.UpdateGroupUser(groupUser.group_id, groupUser.user_id, dto)).toEqual(result);
     });
 
     it('update should return a not found exception', async () => {
@@ -193,10 +191,10 @@ describe('GroupController', () => {
       };
       jest.spyOn(groupService, 'findOne').mockImplementation(async () => null);
       jest.spyOn(userService, 'findOne').mockImplementation(async () => user);
-      jest.spyOn(groupUserService, 'findOneUserGroup').mockImplementation(async () => groupUser);
-      jest.spyOn(groupUserService, 'patchUserGroup').mockImplementation(async () => groupUser);
+      jest.spyOn(groupUserService, 'findOneGroupUser').mockImplementation(async () => groupUser);
+      jest.spyOn(groupUserService, 'patchGroupUser').mockImplementation(async () => groupUser);
       try {
-        await groupUserController.UpdateUserGroup(groupUser.group_id, groupUser.user_id, dto);
+        await groupUserController.UpdateGroupUser(groupUser.group_id, groupUser.user_id, dto);
       } catch (e) {
         expect(e).toEqual(exception);
       }
@@ -211,10 +209,10 @@ describe('GroupController', () => {
       };
       jest.spyOn(groupService, 'findOne').mockImplementation(async () => group);
       jest.spyOn(userService, 'findOne').mockImplementation(async () => null);
-      jest.spyOn(groupUserService, 'findOneUserGroup').mockImplementation(async () => groupUser);
-      jest.spyOn(groupUserService, 'patchUserGroup').mockImplementation(async () => groupUser);
+      jest.spyOn(groupUserService, 'findOneGroupUser').mockImplementation(async () => groupUser);
+      jest.spyOn(groupUserService, 'patchGroupUser').mockImplementation(async () => groupUser);
       try {
-        await groupUserController.UpdateUserGroup(groupUser.group_id, groupUser.user_id, dto);
+        await groupUserController.UpdateGroupUser(groupUser.group_id, groupUser.user_id, dto);
       } catch (e) {
         expect(e).toEqual(exception);
       }
@@ -229,10 +227,10 @@ describe('GroupController', () => {
       };
       jest.spyOn(groupService, 'findOne').mockImplementation(async () => group);
       jest.spyOn(userService, 'findOne').mockImplementation(async () => user);
-      jest.spyOn(groupUserService, 'findOneUserGroup').mockImplementation(async () => null);
-      jest.spyOn(groupUserService, 'patchUserGroup').mockImplementation(async () => groupUser);
+      jest.spyOn(groupUserService, 'findOneGroupUser').mockImplementation(async () => null);
+      jest.spyOn(groupUserService, 'patchGroupUser').mockImplementation(async () => groupUser);
       try {
-        await groupUserController.UpdateUserGroup(group.group_id, user.user_id, dto);
+        await groupUserController.UpdateGroupUser(group.group_id, user.user_id, dto);
       } catch (e) {
         expect(e).toEqual(exception);
       }
@@ -245,13 +243,13 @@ describe('GroupController', () => {
       const result: ObjectResponseUpdate = new ObjectResponseUpdate(userGroupId, 'The user group has been deleted successfully');
       jest.spyOn(groupService, 'findOne').mockImplementation(async () => group);
       jest.spyOn(userService, 'findOne').mockImplementation(async () => user);
-      jest.spyOn(groupUserService, 'findOneUserGroup').mockImplementation(async () => groupUser);
-      jest.spyOn(groupUserService, 'deleteUserGroup').mockImplementation(async () => null);
+      jest.spyOn(groupUserService, 'findOneGroupUser').mockImplementation(async () => groupUser);
+      jest.spyOn(groupUserService, 'deleteGroupUser').mockImplementation(async () => null);
 
-      expect(await groupUserController.deleteUserGroup(group.group_id, user.user_id)).toEqual(result);
+      expect(await groupUserController.deleteGroupUser(group.group_id, user.user_id)).toEqual(result);
     });
 
-    it('update should return a not found exception', async () => {
+    it('delete should return a Group not found exception', async () => {
       const exception = new ObjectNotFoundException('Group not found with id : ' + groupUser.group_id, 404);
       const dto: UpdateGroupUserDTO = {
         group_id: group.group_id,
@@ -260,16 +258,16 @@ describe('GroupController', () => {
       };
       jest.spyOn(groupService, 'findOne').mockImplementation(async () => null);
       jest.spyOn(userService, 'findOne').mockImplementation(async () => user);
-      jest.spyOn(groupUserService, 'findOneUserGroup').mockImplementation(async () => groupUser);
-      jest.spyOn(groupUserService, 'patchUserGroup').mockImplementation(async () => groupUser);
+      jest.spyOn(groupUserService, 'findOneGroupUser').mockImplementation(async () => groupUser);
+      jest.spyOn(groupUserService, 'patchGroupUser').mockImplementation(async () => groupUser);
       try {
-        await groupUserController.UpdateUserGroup(groupUser.group_id, groupUser.user_id, dto);
+        await groupUserController.UpdateGroupUser(groupUser.group_id, groupUser.user_id, dto);
       } catch (e) {
         expect(e).toEqual(exception);
       }
     });
 
-    it('update should return a not found exception', async () => {
+    it('delete should return a User not found exception', async () => {
       const exception = new ObjectNotFoundException('User not found with id : ' + groupUser.user_id, 404);
       const dto: UpdateGroupUserDTO = {
         group_id: group.group_id,
@@ -278,16 +276,16 @@ describe('GroupController', () => {
       };
       jest.spyOn(groupService, 'findOne').mockImplementation(async () => group);
       jest.spyOn(userService, 'findOne').mockImplementation(async () => null);
-      jest.spyOn(groupUserService, 'findOneUserGroup').mockImplementation(async () => groupUser);
-      jest.spyOn(groupUserService, 'patchUserGroup').mockImplementation(async () => groupUser);
+      jest.spyOn(groupUserService, 'findOneGroupUser').mockImplementation(async () => groupUser);
+      jest.spyOn(groupUserService, 'patchGroupUser').mockImplementation(async () => groupUser);
       try {
-        await groupUserController.UpdateUserGroup(groupUser.group_id, groupUser.user_id, dto);
+        await groupUserController.UpdateGroupUser(groupUser.group_id, groupUser.user_id, dto);
       } catch (e) {
         expect(e).toEqual(exception);
       }
     });
 
-    it('update should return a not found exception', async () => {
+    it('delete should return a groupUser not found exception', async () => {
       const exception = new ObjectNotFoundException('GroupUser not found with user id : ' + user.user_id + ' and group id : ' + group.group_id, 404);
       const dto: UpdateGroupUserDTO = {
         group_id: group.group_id,
@@ -296,10 +294,10 @@ describe('GroupController', () => {
       };
       jest.spyOn(groupService, 'findOne').mockImplementation(async () => group);
       jest.spyOn(userService, 'findOne').mockImplementation(async () => user);
-      jest.spyOn(groupUserService, 'findOneUserGroup').mockImplementation(async () => null);
-      jest.spyOn(groupUserService, 'patchUserGroup').mockImplementation(async () => groupUser);
+      jest.spyOn(groupUserService, 'findOneGroupUser').mockImplementation(async () => null);
+      jest.spyOn(groupUserService, 'patchGroupUser').mockImplementation(async () => groupUser);
       try {
-        await groupUserController.UpdateUserGroup(group.group_id, user.user_id, dto);
+        await groupUserController.UpdateGroupUser(group.group_id, user.user_id, dto);
       } catch (e) {
         expect(e).toEqual(exception);
       }

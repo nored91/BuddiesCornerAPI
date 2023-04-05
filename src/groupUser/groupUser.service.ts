@@ -31,22 +31,21 @@ export class GroupUserService {
       .getRawMany<GroupUser>();
   }
 
-  async findOneUserGroup(group_id: string, user_id: string): Promise<GroupUser> {
+  async findOneGroupUser(group_id: string, user_id: string): Promise<GroupUser> {
     let option: FindOneOptions = { where: { group_id: group_id, user_id: user_id } };
     return await this.groupUserRepository.findOne(option);
   }
 
-  async createUserGroup(createGroupUserDTO: CreateGroupUserDTO) {
+  async createGroupUser(createGroupUserDTO: CreateGroupUserDTO) {
     const groupUser = await this.groupUserRepository.save(createGroupUserDTO);
-    return await this.findOneUserGroup(groupUser.group_id, groupUser.user_id);
+    return await this.findOneGroupUser(groupUser.group_id, groupUser.user_id);
   }
 
-  async patchUserGroup(updateGroupUserDTO: UpdateGroupUserDTO) {
+  async patchGroupUser(updateGroupUserDTO: UpdateGroupUserDTO) {
     return await this.groupUserRepository.save(updateGroupUserDTO);
   }
 
-  async deleteUserGroup(group_id: string, user_id: string): Promise<DeleteResult> {
-    let option: FindOptionsWhere<GroupUser> = { group_id: group_id, user_id: user_id };
+  async deleteGroupUser(option: FindOptionsWhere<GroupUser>): Promise<DeleteResult> {
     return this.groupUserRepository.delete(option);
   }
 }

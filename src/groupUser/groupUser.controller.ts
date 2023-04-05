@@ -61,7 +61,7 @@ export class GroupUserController {
   @ApiResponse({ status: 400, type: BadRequestException, description: 'Validation failed (uuid is expected)' })
   @ApiResponse({ status: 404, type: ObjectNotFoundException, description: 'No user/group found' })
   @Post('/group/:group_id/user/:user_id')
-  async createUserGroup(
+  async createGroupUser(
     @Param('group_id', ParseUUIDPipe) groupId: string,
     @Param('user_id', ParseUUIDPipe) userId: string,
     @Body() createGroupUserDTO: CreateGroupUserDTO
@@ -77,7 +77,7 @@ export class GroupUserController {
     }
     createGroupUserDTO.user_id = user.user_id;
     return new ObjectResponseCreate<GroupUser>(
-      await this.groupUserService.createUserGroup(createGroupUserDTO),
+      await this.groupUserService.createGroupUser(createGroupUserDTO),
       'The user has been added successfully to the group'
     );
   }
@@ -88,7 +88,7 @@ export class GroupUserController {
   @ApiResponse({ status: 400, type: BadRequestException, description: 'Validation failed (uuid is expected)' })
   @ApiResponse({ status: 404, type: ObjectNotFoundException, description: 'No user/group found' })
   @Patch('/group/:group_id/user/:user_id')
-  async UpdateUserGroup(
+  async UpdateGroupUser(
     @Param('group_id', ParseUUIDPipe) groupId: string,
     @Param('user_id', ParseUUIDPipe) userId: string,
     @Body() updateGroupUserDTO: UpdateGroupUserDTO
@@ -103,11 +103,11 @@ export class GroupUserController {
       throw new ObjectNotFoundException('User not found with id : ' + userId, 404);
     }
     updateGroupUserDTO.user_id = user.user_id;
-    let userGroup: GroupUser = await this.groupUserService.findOneUserGroup(groupId, userId);
+    let userGroup: GroupUser = await this.groupUserService.findOneGroupUser(groupId, userId);
     if (userGroup === null) {
       throw new ObjectNotFoundException('GroupUser not found with user id : ' + userId + ' and group id : ' + groupId, 404);
     }
-    userGroup = await this.groupUserService.patchUserGroup(updateGroupUserDTO);
+    userGroup = await this.groupUserService.patchGroupUser(updateGroupUserDTO);
     let userGroupId: string = '{ group_id : ' + userGroup.group_id + ', user_id : ' + userGroup.user_id + ' }';
     return new ObjectResponseUpdate(userGroupId, 'The user group has been updated successfully');
   }
@@ -118,7 +118,7 @@ export class GroupUserController {
   @ApiResponse({ status: 400, type: BadRequestException, description: 'Validation failed (uuid is expected)' })
   @ApiResponse({ status: 404, type: ObjectNotFoundException, description: 'No user/group found' })
   @Delete('/group/:group_id/user/:user_id')
-  async deleteUserGroup(
+  async deleteGroupUser(
     @Param('group_id', ParseUUIDPipe) groupId: string,
     @Param('user_id', ParseUUIDPipe) userId: string
   ): Promise<ObjectResponseUpdate> {
@@ -130,11 +130,11 @@ export class GroupUserController {
     if (user === null) {
       throw new ObjectNotFoundException('User not found with id : ' + userId, 404);
     }
-    let userGroup: GroupUser = await this.groupUserService.findOneUserGroup(groupId, userId);
+    let userGroup: GroupUser = await this.groupUserService.findOneGroupUser(groupId, userId);
     if (userGroup === null) {
       throw new ObjectNotFoundException('GroupUser not found with user id : ' + userId + ' and group id : ' + groupId, 404);
     }
-    await this.groupUserService.deleteUserGroup(groupId, userId);
+    await this.groupUserService.deleteGroupUser({ group_id: groupId, user_id: userId });
     let userGroupId: string = '{ group_id : ' + userGroup.group_id + ', user_id : ' + userGroup.user_id + ' }';
     return new ObjectResponseUpdate(userGroupId, 'The user group has been deleted successfully');
   }
