@@ -1,8 +1,6 @@
 import { Transform } from 'class-transformer';
-import { IsBoolean, IsDefined, IsOptional, IsString, Length, ValidationError } from 'class-validator';
+import { IsBoolean, IsOptional, ValidationError } from 'class-validator';
 import { BadRequestExceptionValidation } from '../common/exception/badRequestExceptionValidation';
-import { Group } from '../group/group.entity';
-import { User } from '../user/user.entity';
 
 export class CreateGroupUserDTO {
   @IsOptional()
@@ -10,7 +8,7 @@ export class CreateGroupUserDTO {
     try {
       return JSON.parse(value);
     } catch (e) {
-      let error: ValidationError[] = [{ property: 'active', constraints: { active: 'active must be a boolean value' } }];
+      let error: ValidationError[] = [{ property: 'administrator', constraints: { administrator: 'administrator must be a boolean value' } }];
       throw new BadRequestExceptionValidation(error);
     }
   })
@@ -30,7 +28,7 @@ export class UpdateGroupUserDTO {
     try {
       return JSON.parse(value);
     } catch (e) {
-      let error: ValidationError[] = [{ property: 'active', constraints: { active: 'active must be a boolean value' } }];
+      let error: ValidationError[] = [{ property: 'administrator', constraints: { administrator: 'administrator must be a boolean value' } }];
       throw new BadRequestExceptionValidation(error);
     }
   })

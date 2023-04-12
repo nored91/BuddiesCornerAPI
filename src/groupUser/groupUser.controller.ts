@@ -32,8 +32,8 @@ export class GroupUserController {
   @ApiResponse({ status: 200, type: Array<GroupUser>, description: 'A list of user' })
   @ApiResponse({ status: 400, type: BadRequestException, description: 'Validation failed (uuid is expected)' })
   @ApiResponse({ status: 404, type: ObjectNotFoundException, description: 'No group found' })
-  @Get('/group/:id/user')
-  async findAllUser(@Param('id', ParseUUIDPipe) groupId: string): Promise<GroupUser[]> {
+  @Get('/group/:group_id/user')
+  async findAllUser(@Param('group_id', ParseUUIDPipe) groupId: string): Promise<GroupUser[]> {
     const group: Group = await this.groupService.findOne(groupId);
     if (group === null) {
       throw new ObjectNotFoundException('Group not found with id : ' + groupId, 404);
@@ -46,8 +46,8 @@ export class GroupUserController {
   @ApiResponse({ status: 200, type: Array<GroupUser>, description: 'A list of group' })
   @ApiResponse({ status: 400, type: BadRequestException, description: 'Validation failed (uuid is expected)' })
   @ApiResponse({ status: 404, type: ObjectNotFoundException, description: 'No user found' })
-  @Get('/user/:id/group')
-  async findAllGroup(@Param('id', ParseUUIDPipe) userId: string): Promise<GroupUser[]> {
+  @Get('/user/:user_id/group')
+  async findAllGroup(@Param('user_id', ParseUUIDPipe) userId: string): Promise<GroupUser[]> {
     const user: User = await this.userService.findOne(userId);
     if (user === null) {
       throw new ObjectNotFoundException('User not found with id : ' + userId, 404);

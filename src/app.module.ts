@@ -24,7 +24,7 @@ import { CommentModule } from './comment/comment.module';
       database: 'buddiescorner',
       entities: [User, Group, Event, Task, Comment, GroupUser],
       synchronize: false,
-      logging: ['error', 'info', 'log', 'query'] //"query","schema","error","warn","info","log","migration"
+      logging: ['error', 'warn', 'log'] //"query","schema","error","warn","info","log","migration"
     }),
     UserModule,
     EventModule,

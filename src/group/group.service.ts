@@ -6,7 +6,6 @@ import { CreateGroupDTO, UpdateGroupDTO } from './group.dto';
 import { Group } from './group.entity';
 import { GroupFilter } from './group.filter';
 import { Filter, TypeRelation } from '../common/object/filter';
-import { User } from '../user/user.entity';
 
 @Injectable()
 export class GroupService {
@@ -50,14 +49,5 @@ export class GroupService {
 
   async delete(options: FindOptionsWhere<Group>): Promise<DeleteResult> {
     return await this.groupRepository.delete(options);
-  }
-
-  async findAllUser(groupId: string): Promise<User[]> {
-    return this.groupRepository
-      .createQueryBuilder('group')
-      .select(['user.user_id', 'user.firstname', 'user.lastname', 'user.mail', 'user.pseudo'])
-      .leftJoin('group.users', 'user')
-      .where('group.group_id = :groupId', { groupId: groupId })
-      .getRawMany();
   }
 }
