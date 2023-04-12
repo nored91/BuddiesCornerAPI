@@ -14,7 +14,6 @@ export class GroupService {
     private groupRepository: Repository<Group>
   ) {}
 
-  // eslint-disable-next-line prettier/prettier
   async findAll(pagination: Pagination, groupFilter: GroupFilter): Promise<[Group[], number]> {
     const options: FindManyOptions = {
       skip: pagination.offset,
@@ -35,8 +34,8 @@ export class GroupService {
     return await this.groupRepository.findAndCount(options);
   }
 
-  async findOne(group_id: string): Promise<Group> {
-    return await this.groupRepository.findOneBy({ group_id: group_id });
+  async findOne(groupId: string): Promise<Group> {
+    return await this.groupRepository.findOneBy({ group_id: groupId });
   }
 
   async create(createGroupDTO: CreateGroupDTO): Promise<Group> {

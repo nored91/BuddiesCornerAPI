@@ -78,6 +78,7 @@ CREATE TABLE group_user(
   group_id uuid,
   user_id uuid,
   administrator boolean default false,
+  join_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
   PRIMARY KEY (group_id, user_id),
   CONSTRAINT primary_key_group_group_user FOREIGN KEY (group_id) REFERENCES "group"(group_id),
   CONSTRAINT primary_key_user_group_user FOREIGN KEY (user_id) REFERENCES "user"(user_id)

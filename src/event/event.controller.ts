@@ -22,11 +22,7 @@ import { User } from '../user/user.entity';
 @ApiTags('Event')
 @UseFilters(ObjectNotFoundException)
 export class EventController {
-  constructor(
-    private readonly eventService: EventService,
-    private readonly groupService: GroupService,
-    private readonly userService: UserService
-  ) {}
+  constructor(private readonly eventService: EventService, private readonly groupService: GroupService, private readonly userService: UserService) {}
 
   @ApiFilterQuery('filter', EventFilter)
   @ApiFilterQuery('page', Pagination)

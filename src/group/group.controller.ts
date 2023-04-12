@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Delete, Param, ParseUUIDPipe, Patch } from '@nestjs/common';
+import { BadRequestException, Delete, Param, ParseUUIDPipe, Patch } from '@nestjs/common';
 import { Body, Controller, Get, Post, Query, UseFilters } from '@nestjs/common/decorators';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ObjectResponseRecord } from '../common/response/objectResponseRecord';
@@ -13,6 +13,7 @@ import { CreateGroupDTO, UpdateGroupDTO } from './group.dto';
 import { Group } from './group.entity';
 import { GroupFilter } from './group.filter';
 import { GroupService } from './group.service';
+import { User } from '../user/user.entity';
 
 @Controller('group')
 @ApiTags('Group')
@@ -30,8 +31,9 @@ export class GroupController {
 
   @ApiResponse({ status: 200, type: Group, description: 'Requested group' })
   @ApiResponse({ status: 404, type: ObjectNotFoundException, description: 'No group found' })
+  @ApiResponse({ status: 400, type: BadRequestException, description: 'Validation failed (uuid is expected)' })
   @Get('/:id')
-  async findOne(@Param('id', ParseUUIDPipe) groupId: string) {
+  async findOne(@Param('id', ParseUUIDPipe) groupId: string): Promise<Group> {
     const group: Group = await this.groupService.findOne(groupId);
     if (group === null) {
       throw new ObjectNotFoundException('Group not found with id : ' + groupId, 404);
@@ -43,13 +45,14 @@ export class GroupController {
   @ApiResponse({ status: 400, type: BadRequestExceptionValidation, description: 'Bad Request - Validation failed' })
   @Post()
   async create(@Body() createGroupDTO: CreateGroupDTO): Promise<ObjectResponseCreate<Group>> {
-    return new ObjectResponseCreate(await this.groupService.create(createGroupDTO), 'The group has been created successfully');
+    return new ObjectResponseCreate<Group>(await this.groupService.create(createGroupDTO), 'The group has been created successfully');
   }
 
   @ApiResponse({ status: 200, type: ObjectResponseUpdate, description: 'The group has been updated successfully' })
   @ApiResponse({ status: 404, type: ObjectNotFoundException, description: 'No group found' })
+  @ApiResponse({ status: 400, type: BadRequestException, description: 'Validation failed (uuid is expected)' })
   @Patch('/:id')
-  async update(@Param('id', ParseUUIDPipe) groupId: string, @Body() updateGroupDTO: UpdateGroupDTO) {
+  async update(@Param('id', ParseUUIDPipe) groupId: string, @Body() updateGroupDTO: UpdateGroupDTO): Promise<ObjectResponseUpdate> {
     updateGroupDTO.group_id = groupId;
     let group: Group = await this.groupService.findOne(groupId);
     if (group === null) {
@@ -61,8 +64,9 @@ export class GroupController {
 
   @ApiResponse({ status: 200, type: ObjectResponseUpdate, description: 'The group has been deleted successfully' })
   @ApiResponse({ status: 404, type: ObjectNotFoundException, description: 'No group found' })
+  @ApiResponse({ status: 400, type: BadRequestException, description: 'Validation failed (uuid is expected)' })
   @Delete('/:id')
-  async delete(@Param('id', ParseUUIDPipe) groupId: string) {
+  async delete(@Param('id', ParseUUIDPipe) groupId: string): Promise<ObjectResponseUpdate> {
     const group: Group = await this.groupService.findOne(groupId);
     if (group === null) {
       throw new ObjectNotFoundException('Group not found with id : ' + groupId, 404);
